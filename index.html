@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GROW-WIN · AGRI-LOGIC ENGINE v1.4</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+body { background: #0a0c10; color: #e6edf3; font-family: 'Inter', sans-serif; font-size: 13px; }
+.card { background: #161b22; border: 1px solid #30363d; border-radius: 1.5rem; transition: 0.3s; }
+.card:hover { border-color: #2ea44f; }
+.input-field { background: #0d1117; border: 1px solid #3b434b; color: #2ea44f; padding: 0.5rem; border-radius: 0.75rem; width: 100%; font-weight: bold; outline: none; }
+.btn { background: #2ea44f; color: black; font-weight: 800; padding: 0.75rem; border-radius: 1rem; cursor: pointer; text-transform: uppercase; width: 100%; margin-top: 10px; border: none; }
+.btn:hover { background: #3fb950; box-shadow: 0 0 15px #2ea44f; transform: translateY(-1px); }
+.section-title { color: #2ea44f; font-weight: 900; text-transform: uppercase; font-size: 0.85rem; margin-bottom: 1rem; border-left: 3px solid #2ea44f; padding-left: 8px; }
+.label-text { font-size: 10px; font-weight: 700; color: #8b949e; text-transform: uppercase; margin-bottom: 4px; display: block; }
+.brain-box { border: 1px solid #2ea44f44; background: #0d1117; border-radius: 1rem; padding: 12px; min-height: 140px; }
+.result-box { background: #161b22; border: 1px solid #30363d; border-radius: 1rem; padding: 15px; }
+.watermark { text-align: center; margin-top: 2rem; font-size: 10px; color: #30363d; letter-spacing: 2px; font-weight: bold; }
+</style>
+</head>
+<body class="p-6">
+
+<div class="max-w-[1200px] mx-auto">
+    <div class="text-center mb-8">
+        <h1 class="text-4xl font-black tracking-tighter uppercase"> GROW-WIN <span class="text-[#2ea44f]">Agri-Logic Engine</span></h1>
+        <p class="text-xs text-gray-500 mt-1 tracking-widest uppercase">100-Year Pattern-Based Computing · v1.4</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="card p-6 border-l-4 border-blue-500">
+            <h2 class="section-title">Molecular Input</h2>
+            <div class="space-y-4">
+                <div>
+                    <label class="label-text">Universal Target Track</label>
+                    <select id="targetType" class="input-field">
+                        <option value="" disabled selected>Select Target Track</option>
+                        <option value="INSECTICIDE">INSECTICIDE</option>
+                        <option value="FUNGICIDE">FUNGICIDE</option>
+                        <option value="HERBICIDE">HERBICIDE</option>
+                        <option value="NEMATICIDE">NEMATICIDE</option>
+                        <option value="ACARICIDE">ACARICIDE</option>
+                        <option value="PGR">GROWTH REGULATOR</option>
+                        <option value="BACTERICIDE">BACTERICIDE</option>
+                    </select>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div><label class="label-text">MW (Da)</label><input id="mw" type="number" class="input-field" placeholder="0"></div>
+                    <div><label class="label-text">LogP</label><input id="logP" type="number" step="0.1" class="input-field" placeholder="0.0"></div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div><label class="label-text">Rotatable Bonds</label><input id="rb" type="number" class="input-field" placeholder="0"></div>
+                    <div><label class="label-text">TPSA (Å²)</label><input id="tpsa" type="number" class="input-field" placeholder="0"></div>
+                </div>
+                <div>
+                    <label class="label-text">Universal Functional Groups</label>
+                    <input list="fg-list" id="fg" type="text" class="input-field" placeholder="Search 18 Groups...">
+                    <datalist id="fg-list">
+                        <option value="Fluorine"> <option value="Chlorine"> <option value="Bromine">
+                        <option value="Methyl"> <option value="Ethyl"> <option value="Phenyl Ring">
+                        <option value="Hydroxyl"> <option value="Ether"> <option value="Carbonyl">
+                        <option value="Carboxylic Acid"> <option value="Methoxy"> <option value="Amine">
+                        <option value="Amide"> <option value="Cyano"> <option value="Sulfonyl">
+                        <option value="Thioether"> <option value="Nitro"> <option value="Ester">
+                    </datalist>
+                </div>
+                <button class="btn" onclick="runHistoricalEngine()">Analyze Historical Logic</button>
+            </div>
+        </div>
+
+        <div class="card p-6 border-l-4 border-yellow-500 lg:col-span-2">
+            <h2 class="section-title">Pattern Intelligence & Advice</h2>
+            <div class="brain-box text-sm leading-relaxed mb-4" id="advisor-output">
+                Engine Ready. Comparing against aggregated 100-year real-world patterns.
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="result-box">
+                    <span class="label-text">Logic Gates</span>
+                    <div id="gate-status" class="space-y-1 mt-2 font-mono text-[10px]"></div>
+                </div>
+                <div class="result-box flex flex-col items-center justify-center">
+                    <span class="label-text">Historical Viability</span>
+                    <div id="final-score" class="text-6xl font-black text-white">0%</div>
+                    <div id="status-label" class="mt-2 font-bold uppercase tracking-widest text-gray-500">IDLE</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="watermark">GROW-WIN MULTI-INDUSTRIAL NEURAL ENGINE · R&D · U. ANANTH KUMAR</div>
+</div>
+
+<script>
+const UNIVERSAL_TARGETS = {
+  INSECTICIDE: {logP:[2.5,4], mw:[150,500]},
+  FUNGICIDE: {logP:[1.5,3.5], mw:[120,450]},
+  HERBICIDE: {logP:[1.5,3.5], mw:[100,400]},
+  NEMATICIDE: {logP:[1,3], mw:[100,350]},
+  ACARICIDE: {logP:[2,4], mw:[150,500]},
+  PGR: {logP:[1,3], mw:[100,300]},
+  BACTERICIDE: {logP:[0.5,1.5], mw:[120,400]}
+};
+
+const HISTORICAL_PATTERNS = [
+  {fg:"nitro", result:"FAIL", reason:"Toxicity & instability", suggest:"Cyano / Halogen"},
+  {fg:"ester", target:"NEMATICIDE", result:"FAIL", reason:"Hydrolyzes in soil", suggest:"Amide"},
+  {fg:"fluorine", result:"PASS", reason:"Metabolic stability"},
+  {fg:"chlorine", result:"PASS", reason:"Persistence"},
+  {fg:"methyl", result:"PASS", reason:"Balanced lipophilicity"},
+  {fg:"cyano", result:"PASS", reason:"Strong target binding"},
+  {fg:"amide", result:"PASS", reason:"Soil stable"},
+  {fg:"hydroxyl", result:"PASS", reason:"Improved solubility"}
+];
+
+function runHistoricalEngine() {
+    const track = document.getElementById('targetType').value;
+    const mw = parseFloat(document.getElementById('mw').value) || 0;
+    const logP = parseFloat(document.getElementById('logP').value) || 0;
+    const rb = parseInt(document.getElementById('rb').value) || 0;
+    const tpsa = parseFloat(document.getElementById('tpsa').value) || 0;
+    const fgInput = document.getElementById('fg').value.toLowerCase();
+    
+    if(!track) { alert("Select Target Track"); return; }
+
+    let gates = [], advice = [], score = 100;
+    const tgt = UNIVERSAL_TARGETS[track];
+
+    // 1. Threshold Logic with suggestions
+    if(logP < tgt.logP[0]) { 
+        gates.push(`❌ LogP: Too Low`);
+        advice.push(`💡 Increase LogP (e.g., add Halogen like F/Cl) for ${track}.`);
+        score -= 20;
+    } else if(logP > tgt.logP[1]){
+        gates.push(`❌ LogP: Too High`);
+        advice.push(`💡 Reduce LogP (e.g., replace long alkyl chains) for ${track}.`);
+        score -= 20;
+    } else { gates.push("✅ LogP: Within Threshold"); }
+
+    if(mw < tgt.mw[0]) {
+        gates.push(`❌ MW: Too Low`);
+        advice.push(`💡 Add functional groups to reach MW range for ${track}.`);
+        score -= 15;
+    } else if(mw > tgt.mw[1]){
+        gates.push(`❌ MW: Too High`);
+        advice.push(`💡 Reduce MW (remove bulky groups) for ${track}.`);
+        score -= 20;
+    } else { gates.push("✅ MW: Within Threshold"); }
+
+    if(tpsa > 140){ gates.push("❌ TPSA: Polar Barrier"); advice.push("💡 Reduce OH/COOH groups to penetrate target."); score -= 15; }
+    if(rb > 10){ gates.push("❌ RB: High Entropy"); advice.push("💡 Reduce rotatable bonds to increase rigidity."); score -= 15; }
+
+    // 2. Historical Pattern Intelligence with auto-fixes
+    HISTORICAL_PATTERNS.forEach(p => {
+        if(fgInput.includes(p.fg)){
+            if(!p.target || p.target === track){
+                if(p.result === "FAIL"){
+                    score -= 25;
+                    gates.push(`❌ FG-RISK: ${p.fg.toUpperCase()}`);
+                    advice.push(`💡 Historical Failure: ${p.reason}. Suggest replacing ${p.fg.toUpperCase()} with ${p.suggest || 'Cyano / Halogen'}.`);
+                } else {
+                    score += 5;
+                    gates.push(`✅ FG-BENEFIT: ${p.fg.toUpperCase()}`);
+                    advice.push(`🛡️ Historical Success: ${p.reason}`);
+                }
+            }
+        }
+    });
+
+    // 3. Final Rendering
+    document.getElementById('gate-status').innerHTML = gates.map(g => 
+        `<div class="${g.includes('❌') ? 'text-red-500' : 'text-green-500'} font-bold">${g}</div>`
+    ).join('');
+
+    document.getElementById('advisor-output').innerHTML = advice.length > 0 ? 
+        advice.map(a => `<div class="mb-1 text-blue-400 font-bold">${a}</div>`).join('') : 
+        "<div class='text-green-500 font-bold'>🌟 PATTERN MATCH: Elite molecule detected.</div>";
+
+    const finalScore = Math.min(100, Math.max(0, score));
+    document.getElementById('final-score').innerText = finalScore + "%";
+    
+    let status = "REJECT"; let color = "#f85149";
+    if (finalScore >= 80) { status = "PASS (ELITE)"; color = "#2ea44f"; }
+    else if (finalScore >= 50) { status = "OPTIMIZE"; color = "#f2cc60"; }
+    else { status = "REJECT"; color = "#f85149"; }
+    
+    document.getElementById('status-label').innerText = status;
+    document.getElementById('status-label').style.color = color;
+    document.getElementById('final-score').style.color = color;
+}
+</script>
+</body>
+</html>
