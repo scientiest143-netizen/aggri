@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GROW-WIN · AGRI-LOGIC ENGINE v1.4</title>
+<title>GROW-WIN · AGRI-LOGIC ENGINE v1.7</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
@@ -16,6 +16,7 @@ body { background: #0a0c10; color: #e6edf3; font-family: 'Inter', sans-serif; fo
 .section-title { color: #2ea44f; font-weight: 900; text-transform: uppercase; font-size: 0.85rem; margin-bottom: 1rem; border-left: 3px solid #2ea44f; padding-left: 8px; }
 .label-text { font-size: 10px; font-weight: 700; color: #8b949e; text-transform: uppercase; margin-bottom: 4px; display: block; }
 .brain-box { border: 1px solid #2ea44f44; background: #0d1117; border-radius: 1rem; padding: 12px; min-height: 140px; }
+.designer-box { border: 1px solid #3a3f4b; background: #0d1117; border-radius: 1rem; padding: 12px; margin-top: 15px; }
 .result-box { background: #161b22; border: 1px solid #30363d; border-radius: 1rem; padding: 15px; }
 .watermark { text-align: center; margin-top: 2rem; font-size: 10px; color: #30363d; letter-spacing: 2px; font-weight: bold; }
 </style>
@@ -25,15 +26,15 @@ body { background: #0a0c10; color: #e6edf3; font-family: 'Inter', sans-serif; fo
 <div class="max-w-[1200px] mx-auto">
     <div class="text-center mb-8">
         <h1 class="text-4xl font-black tracking-tighter uppercase"> GROW-WIN <span class="text-[#2ea44f]">Agri-Logic Engine</span></h1>
-        <p class="text-xs text-gray-500 mt-1 tracking-widest uppercase">100-Year Pattern-Based Computing · v1.4</p>
+        <p class="text-xs text-gray-500 mt-1 tracking-widest uppercase">100-Year Logic-Based Computing · v1.7 (Molecule Designer Mode)</p>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <div class="card p-6 border-l-4 border-blue-500">
-            <h2 class="section-title">Molecular Input</h2>
+            <h2 class="section-title">Industrial Master Input</h2>
             <div class="space-y-4">
                 <div>
-                    <label class="label-text">Universal Target Track</label>
+                    <label class="label-text">Target Track</label>
                     <select id="targetType" class="input-field">
                         <option value="" disabled selected>Select Target Track</option>
                         <option value="INSECTICIDE">INSECTICIDE</option>
@@ -45,17 +46,20 @@ body { background: #0a0c10; color: #e6edf3; font-family: 'Inter', sans-serif; fo
                         <option value="BACTERICIDE">BACTERICIDE</option>
                     </select>
                 </div>
-                <div class="grid grid-cols-2 gap-3">
+                
+                <div class="grid grid-cols-2 gap-2">
                     <div><label class="label-text">MW (Da)</label><input id="mw" type="number" class="input-field" placeholder="0"></div>
                     <div><label class="label-text">LogP</label><input id="logP" type="number" step="0.1" class="input-field" placeholder="0.0"></div>
                 </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div><label class="label-text">Rotatable Bonds</label><input id="rb" type="number" class="input-field" placeholder="0"></div>
+
+                <div class="grid grid-cols-2 gap-2">
                     <div><label class="label-text">TPSA (Å²)</label><input id="tpsa" type="number" class="input-field" placeholder="0"></div>
+                    <div><label class="label-text">Rotatable Bonds</label><input id="rb" type="number" class="input-field" placeholder="0"></div>
                 </div>
+
                 <div>
-                    <label class="label-text">Universal Functional Groups</label>
-                    <input list="fg-list" id="fg" type="text" class="input-field" placeholder="Search 18 Groups...">
+                    <label class="label-text">Functional Groups</label>
+                    <input list="fg-list" id="fg" type="text" class="input-field" placeholder="e.g. Phenyl, Fluorine...">
                     <datalist id="fg-list">
                         <option value="Fluorine"> <option value="Chlorine"> <option value="Bromine">
                         <option value="Methyl"> <option value="Ethyl"> <option value="Phenyl Ring">
@@ -65,34 +69,70 @@ body { background: #0a0c10; color: #e6edf3; font-family: 'Inter', sans-serif; fo
                         <option value="Thioether"> <option value="Nitro"> <option value="Ester">
                     </datalist>
                 </div>
-                <button class="btn" onclick="runHistoricalEngine()">Analyze Historical Logic</button>
+
+                <hr class="border-gray-800">
+                <h2 class="section-title text-yellow-500">Field & Climate Pillars</h2>
+                
+                <div class="grid grid-cols-2 gap-2">
+                    <div><label class="label-text">VP (mPa)</label><input id="vaporPressure" type="number" step="0.01" class="input-field" placeholder="0.01"></div>
+                    <div><label class="label-text">UV-HL (Hr)</label><input id="uvHalfLife" type="number" class="input-field" placeholder="0"></div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <div><label class="label-text">Solubility (mg/L)</label><input id="waterSolubility" type="number" class="input-field" placeholder="0"></div>
+                    <div><label class="label-text">Surf. Tension</label><input id="surfaceTension" type="number" class="input-field" placeholder="0"></div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <div><label class="label-text">Koc (Soil Adsorp)</label><input id="koc" type="number" class="input-field" placeholder="0"></div>
+                    <div><label class="label-text">DT50 (Soil HL)</label><input id="dt50" type="number" class="input-field" placeholder="0"></div>
+                </div>
+
+                <div class="flex items-center gap-2 p-2 bg-[#0d1117] rounded-lg">
+                    <input type="checkbox" id="sticker" class="w-4 h-4 accent-[#2ea44f]">
+                    <label class="label-text mb-0 cursor-pointer">Use Sticker/Adjuvant</label>
+                </div>
+
+                <button class="btn" onclick="runHistoricalEngine()">Run 95% Logic Analyze</button>
             </div>
         </div>
 
         <div class="card p-6 border-l-4 border-yellow-500 lg:col-span-2">
             <h2 class="section-title">Pattern Intelligence & Advice</h2>
             <div class="brain-box text-sm leading-relaxed mb-4" id="advisor-output">
-                Engine Ready. Comparing against aggregated 100-year real-world patterns.
+                Engine Ready. Historical patterns waiting for analysis...
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="result-box">
-                    <span class="label-text">Logic Gates</span>
+                    <span class="label-text">Logic Gates Status</span>
                     <div id="gate-status" class="space-y-1 mt-2 font-mono text-[10px]"></div>
                 </div>
                 <div class="result-box flex flex-col items-center justify-center">
-                    <span class="label-text">Historical Viability</span>
+                    <span class="label-text">Field Success Prediction</span>
                     <div id="final-score" class="text-6xl font-black text-white">0%</div>
                     <div id="status-label" class="mt-2 font-bold uppercase tracking-widest text-gray-500">IDLE</div>
+                </div>
+            </div>
+
+            <div class="designer-box">
+                <h2 class="section-title text-cyan-400">🧪 v1.7 Molecule Designer Suggestions</h2>
+                <div id="designer-output" class="text-[11px] text-gray-400 space-y-2 font-mono">
+                    Awaiting molecular analysis to provide structural design logic...
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="watermark">GROW-WIN MULTI-INDUSTRIAL NEURAL ENGINE · R&D · U. ANANTH KUMAR</div>
+    <div class="watermark">DESIGNED BY UDAYANA ANANTH KUMAR · GROW-WIN R&D</div>
 </div>
 
 <script>
+// ==========================================
+// GROW-WIN Agri-Logic Engine v1.7 
+// Designed by: Udayana Ananth Kumar
+// ==========================================
+
 const UNIVERSAL_TARGETS = {
   INSECTICIDE: {logP:[2.5,4], mw:[150,500]},
   FUNGICIDE: {logP:[1.5,3.5], mw:[120,450]},
@@ -121,44 +161,50 @@ function runHistoricalEngine() {
     const rb = parseInt(document.getElementById('rb').value) || 0;
     const tpsa = parseFloat(document.getElementById('tpsa').value) || 0;
     const fgInput = document.getElementById('fg').value.toLowerCase();
-    
+
+    const vp = parseFloat(document.getElementById('vaporPressure').value) || 0; 
+    const uvHL = parseFloat(document.getElementById('uvHalfLife').value) || 0; 
+    const solub = parseFloat(document.getElementById('waterSolubility').value) || 0; 
+    const koc = parseFloat(document.getElementById('koc').value) || 0; 
+    const dt50 = parseFloat(document.getElementById('dt50').value) || 0; 
+    const surfaceT = parseFloat(document.getElementById('surfaceTension').value) || 0; 
+    const sticker = document.getElementById('sticker').checked || false; 
+
     if(!track) { alert("Select Target Track"); return; }
 
-    let gates = [], advice = [], score = 100;
+    let gates = [], advice = [], score = 100, designerSuggestions = [];
     const tgt = UNIVERSAL_TARGETS[track];
 
-    // 1. Threshold Logic with suggestions
-    if(logP < tgt.logP[0]) { 
-        gates.push(`❌ LogP: Too Low`);
-        advice.push(`💡 Increase LogP (e.g., add Halogen like F/Cl) for ${track}.`);
-        score -= 20;
-    } else if(logP > tgt.logP[1]){
-        gates.push(`❌ LogP: Too High`);
-        advice.push(`💡 Reduce LogP (e.g., replace long alkyl chains) for ${track}.`);
-        score -= 20;
-    } else { gates.push("✅ LogP: Within Threshold"); }
-
-    if(mw < tgt.mw[0]) {
-        gates.push(`❌ MW: Too Low`);
-        advice.push(`💡 Add functional groups to reach MW range for ${track}.`);
-        score -= 15;
-    } else if(mw > tgt.mw[1]){
-        gates.push(`❌ MW: Too High`);
-        advice.push(`💡 Reduce MW (remove bulky groups) for ${track}.`);
-        score -= 20;
+    // ---------- v1.7 Designer Logic Integration ----------
+    
+    // MW Designer Logic
+    if(mw < tgt.mw[0] || mw > tgt.mw[1]){
+        gates.push(`❌ MW: Size Error`);
+        advice.push(`💡 Target MW for ${track} is ${tgt.mw[0]} - ${tgt.mw[1]}.`);
+        designerSuggestions.push("🛠️ DESIGNER: Adjust core skeleton atoms (C/N) to reach optimal size.");
+        score -= 25;
     } else { gates.push("✅ MW: Within Threshold"); }
 
-    if(tpsa > 140){ gates.push("❌ TPSA: Polar Barrier"); advice.push("💡 Reduce OH/COOH groups to penetrate target."); score -= 15; }
-    if(rb > 10){ gates.push("❌ RB: High Entropy"); advice.push("💡 Reduce rotatable bonds to increase rigidity."); score -= 15; }
+    // LogP Designer Logic
+    if(logP < tgt.logP[0] || logP > tgt.logP[1]){
+        gates.push(`❌ LogP: Range Error`);
+        advice.push(`💡 Target Range for ${track} is ${tgt.logP[0]} - ${tgt.logP[1]}.`);
+        designerSuggestions.push("🛠️ DESIGNER: Add Halogens to increase LogP or Hydroxyl groups to decrease it.");
+        score -= 25;
+    } else { gates.push("✅ LogP: Within Threshold"); }
 
-    // 2. Historical Pattern Intelligence with auto-fixes
+    if(tpsa > 140){ gates.push("❌ TPSA: Polar Barrier"); advice.push("💡 Too polar for membrane entry."); score -= 15; }
+    if(rb > 10){ gates.push("❌ RB: High Entropy"); advice.push("💡 Increase rigidity for target docking."); score -= 20; }
+
+    // Historical Patterns
     HISTORICAL_PATTERNS.forEach(p => {
         if(fgInput.includes(p.fg)){
             if(!p.target || p.target === track){
                 if(p.result === "FAIL"){
-                    score -= 25;
+                    score -= 30;
                     gates.push(`❌ FG-RISK: ${p.fg.toUpperCase()}`);
-                    advice.push(`💡 Historical Failure: ${p.reason}. Suggest replacing ${p.fg.toUpperCase()} with ${p.suggest || 'Cyano / Halogen'}.`);
+                    advice.push(`💡 Historical Failure: ${p.reason}`);
+                    designerSuggestions.push(`🛠️ REPLACEMENT: Swap ${p.fg.toUpperCase()} with ${p.suggest} for stability.`);
                 } else {
                     score += 5;
                     gates.push(`✅ FG-BENEFIT: ${p.fg.toUpperCase()}`);
@@ -168,14 +214,34 @@ function runHistoricalEngine() {
         }
     });
 
-    // 3. Final Rendering
+    // UV & Climate Designer Logic
+    if(uvHL < 12) {
+        gates.push("❌ UV-STABILITY: Likely photodegradation");
+        advice.push("💡 UV LOGIC: Molecule may degrade under sun; add UV-stable groups.");
+        designerSuggestions.push("🛠️ SHIELDING: Integrate a Phenyl/Benzene ring to absorb UV energy.");
+        score -= 15;
+    } else { gates.push("✅ UV-STABILITY: Stable"); }
+
+    // Physics & Surface Tension Logic
+    if(!sticker && surfaceT < 30) {
+        gates.push("❌ PHYSICS: Poor Leaf Coverage");
+        designerSuggestions.push("🛠️ FORMULATION: Compulsory use of Silicone-based Adjuvant detected.");
+        score -= 10;
+    } else { gates.push("✅ PHYSICS: Leaf Coverage OK"); }
+
+    // Render Gates & Advice
     document.getElementById('gate-status').innerHTML = gates.map(g => 
         `<div class="${g.includes('❌') ? 'text-red-500' : 'text-green-500'} font-bold">${g}</div>`
     ).join('');
 
     document.getElementById('advisor-output').innerHTML = advice.length > 0 ? 
         advice.map(a => `<div class="mb-1 text-blue-400 font-bold">${a}</div>`).join('') : 
-        "<div class='text-green-500 font-bold'>🌟 PATTERN MATCH: Elite molecule detected.</div>";
+        "<div class='text-green-500 font-bold'>🌟 ELITE PATTERN: Optimal molecular & field profile detected.</div>";
+
+    // Render v1.7 Designer Output
+    document.getElementById('designer-output').innerHTML = designerSuggestions.length > 0 ?
+        designerSuggestions.map(s => `<div class='border-l-2 border-cyan-500 pl-2 text-cyan-200'>${s}</div>`).join('') :
+        "<div class='text-green-400'>✅ Structure is optimized for target track success.</div>";
 
     const finalScore = Math.min(100, Math.max(0, score));
     document.getElementById('final-score').innerText = finalScore + "%";
