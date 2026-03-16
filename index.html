@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GROW-WIN · AGRI-LOGIC ENGINE v1.7</title>
+<title>GROW-WIN · AGRI-LOGIC ENGINE v1.7.1</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
@@ -19,6 +19,9 @@ body { background: #0a0c10; color: #e6edf3; font-family: 'Inter', sans-serif; fo
 .designer-box { border: 1px solid #3a3f4b; background: #0d1117; border-radius: 1rem; padding: 12px; margin-top: 15px; }
 .result-box { background: #161b22; border: 1px solid #30363d; border-radius: 1rem; padding: 15px; }
 .watermark { text-align: center; margin-top: 2rem; font-size: 10px; color: #30363d; letter-spacing: 2px; font-weight: bold; }
+/* New Tag Style */
+.fg-tag { background: #0d1117; border: 1px solid #30363d; color: #8b949e; padding: 2px 8px; border-radius: 5px; font-size: 9px; cursor: pointer; transition: 0.2s; }
+.fg-tag:hover { border-color: #2ea44f; color: #2ea44f; }
 </style>
 </head>
 <body class="p-6">
@@ -26,7 +29,7 @@ body { background: #0a0c10; color: #e6edf3; font-family: 'Inter', sans-serif; fo
 <div class="max-w-[1200px] mx-auto">
     <div class="text-center mb-8">
         <h1 class="text-4xl font-black tracking-tighter uppercase"> GROW-WIN <span class="text-[#2ea44f]">Agri-Logic Engine</span></h1>
-        <p class="text-xs text-gray-500 mt-1 tracking-widest uppercase">100-Year Logic-Based Computing · v1.7 (Molecule Designer Mode)</p>
+        <p class="text-xs text-gray-500 mt-1 tracking-widest uppercase">100-Year Logic-Based Computing · v1.7.1 (Pattern Mode)</p>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -58,16 +61,30 @@ body { background: #0a0c10; color: #e6edf3; font-family: 'Inter', sans-serif; fo
                 </div>
 
                 <div>
-                    <label class="label-text">Functional Groups</label>
-                    <input list="fg-list" id="fg" type="text" class="input-field" placeholder="e.g. Phenyl, Fluorine...">
-                    <datalist id="fg-list">
-                        <option value="Fluorine"> <option value="Chlorine"> <option value="Bromine">
-                        <option value="Methyl"> <option value="Ethyl"> <option value="Phenyl Ring">
-                        <option value="Hydroxyl"> <option value="Ether"> <option value="Carbonyl">
-                        <option value="Carboxylic Acid"> <option value="Methoxy"> <option value="Amine">
-                        <option value="Amide"> <option value="Cyano"> <option value="Sulfonyl">
-                        <option value="Thioether"> <option value="Nitro"> <option value="Ester">
-                    </datalist>
+                    <label class="label-text">Functional Groups (Click to Add)</label>
+                    <input id="fg" type="text" class="input-field mb-2" placeholder="e.g. aromatic, halogen...">
+                    <div class="flex flex-wrap gap-1" id="tag-cloud">
+                        <span class="fg-tag" onclick="addTag('halogen')">Halogen</span>
+                        <span class="fg-tag" onclick="addTag('aromatic')">Aromatic</span>
+                        <span class="fg-tag" onclick="addTag('amine')">Amine</span>
+                        <span class="fg-tag" onclick="addTag('amide')">Amide</span>
+                        <span class="fg-tag" onclick="addTag('ester')">Ester</span>
+                        <span class="fg-tag" onclick="addTag('ether')">Ether</span>
+                        <span class="fg-tag" onclick="addTag('hydroxyl')">Hydroxyl</span>
+                        <span class="fg-tag" onclick="addTag('carboxyl')">Carboxyl</span>
+                        <span class="fg-tag" onclick="addTag('ketone')">Ketone</span>
+                        <span class="fg-tag" onclick="addTag('aldehyde')">Aldehyde</span>
+                        <span class="fg-tag" onclick="addTag('nitrile')">Nitrile</span>
+                        <span class="fg-tag" onclick="addTag('nitro')">Nitro</span>
+                        <span class="fg-tag" onclick="addTag('sulfur')">Sulfur</span>
+                        <span class="fg-tag" onclick="addTag('sulfonamide')">Sulfonamide</span>
+                        <span class="fg-tag" onclick="addTag('phosphate')">Phosphate</span>
+                        <span class="fg-tag" onclick="addTag('carbamate')">Carbamate</span>
+                        <span class="fg-tag" onclick="addTag('urea')">Urea</span>
+                        <span class="fg-tag" onclick="addTag('epoxide')">Epoxide</span>
+                        <span class="fg-tag" onclick="addTag('alkene')">Alkene</span>
+                        <span class="fg-tag" onclick="addTag('heterocycle')">Heterocycle</span>
+                    </div>
                 </div>
 
                 <hr class="border-gray-800">
@@ -81,11 +98,6 @@ body { background: #0a0c10; color: #e6edf3; font-family: 'Inter', sans-serif; fo
                 <div class="grid grid-cols-2 gap-2">
                     <div><label class="label-text">Solubility (mg/L)</label><input id="waterSolubility" type="number" class="input-field" placeholder="0"></div>
                     <div><label class="label-text">Surf. Tension</label><input id="surfaceTension" type="number" class="input-field" placeholder="0"></div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-2">
-                    <div><label class="label-text">Koc (Soil Adsorp)</label><input id="koc" type="number" class="input-field" placeholder="0"></div>
-                    <div><label class="label-text">DT50 (Soil HL)</label><input id="dt50" type="number" class="input-field" placeholder="0"></div>
                 </div>
 
                 <div class="flex items-center gap-2 p-2 bg-[#0d1117] rounded-lg">
@@ -116,7 +128,7 @@ body { background: #0a0c10; color: #e6edf3; font-family: 'Inter', sans-serif; fo
             </div>
 
             <div class="designer-box">
-                <h2 class="section-title text-cyan-400">🧪 v1.7 Molecule Designer Suggestions</h2>
+                <h2 class="section-title text-cyan-400">🧪 v1.8.0 Extended Logic Insights</h2>
                 <div id="designer-output" class="text-[11px] text-gray-400 space-y-2 font-mono">
                     Awaiting molecular analysis to provide structural design logic...
                 </div>
@@ -129,8 +141,7 @@ body { background: #0a0c10; color: #e6edf3; font-family: 'Inter', sans-serif; fo
 
 <script>
 // ==========================================
-// GROW-WIN Agri-Logic Engine v1.7 
-// Designed by: Udayana Ananth Kumar
+// GROW-WIN Agri-Logic Engine v1.8.0 
 // ==========================================
 
 const UNIVERSAL_TARGETS = {
@@ -143,16 +154,107 @@ const UNIVERSAL_TARGETS = {
   BACTERICIDE: {logP:[0.5,1.5], mw:[120,400]}
 };
 
-const HISTORICAL_PATTERNS = [
-  {fg:"nitro", result:"FAIL", reason:"Toxicity & instability", suggest:"Cyano / Halogen"},
-  {fg:"ester", target:"NEMATICIDE", result:"FAIL", reason:"Hydrolyzes in soil", suggest:"Amide"},
-  {fg:"fluorine", result:"PASS", reason:"Metabolic stability"},
-  {fg:"chlorine", result:"PASS", reason:"Persistence"},
-  {fg:"methyl", result:"PASS", reason:"Balanced lipophilicity"},
-  {fg:"cyano", result:"PASS", reason:"Strong target binding"},
-  {fg:"amide", result:"PASS", reason:"Soil stable"},
-  {fg:"hydroxyl", result:"PASS", reason:"Improved solubility"}
-];
+/* =====================================
+   GROW-WIN v1.8.0 – Extended 5 Modules
+   100-Year Historical Pattern Logic
+===================================== */
+
+function historicalMetabolism(fgArray, mw, logP){
+    let score = 0, notes = [];
+    if(fgArray.includes("ester") || fgArray.includes("amide")){ score += 2; notes.push("Likely enzymatic hydrolysis"); }
+    if(fgArray.includes("halogen")){ score -= 1; notes.push("Halogen slows metabolism"); }
+    if(logP > 4){ score -= 2; notes.push("High lipophilicity → slower plant metabolism"); }
+    return {score, notes};
+}
+
+function historicalEcotoxicology(fgArray, sol, vp, uvHL){
+    let score = 0, notes = [];
+    if(sol > 1000){ score -= 3; notes.push("High solubility → environmental mobility"); }
+    if(vp < 0.0001){ score -= 2; notes.push("Low volatility → persistence in soil"); }
+    if(fgArray.includes("nitro") || fgArray.includes("carbamate")){ score -= 3; notes.push("Toxic functional groups detected"); }
+    if(uvHL < 12){ score -= 1; notes.push("Low photostability → possible breakdown products"); }
+    return {score, notes};
+}
+
+function historicalFormulation(sol, surfaceT, sticker){
+    let score = 0, notes = [];
+    if(sol < 50){ score -= 2; notes.push("Low solubility → formulation difficulty"); }
+    if(surfaceT < 30 && !sticker){ score -= 2; notes.push("Poor spread without adjuvant"); }
+    if(sticker){ score += 1; notes.push("Adjuvant improves application efficiency"); }
+    return {score, notes};
+}
+
+function historicalResistance(fgArray, rotatableBonds){
+    let score = 0, notes = [];
+    if(fgArray.includes("heterocycle")){ score += 2; notes.push("Common motif → possible cross-resistance risk"); }
+    if(rotatableBonds > 10){ score -= 2; notes.push("Flexible molecule → lower chance of resistance development"); }
+    return {score, notes};
+}
+
+function historicalSynergy(fgArray){
+    let score = 0, notes = [];
+    if(fgArray.includes("halogen") && fgArray.includes("heterocycle")){ score += 2; notes.push("Halogen + Heterocycle → proven synergistic effect"); }
+    if(fgArray.includes("nitro") && fgArray.includes("carbamate")){ score -= 3; notes.push("Nitro + Carbamate → antagonistic/toxic interaction"); }
+    return {score, notes};
+}
+
+/* Combined 5-module historical analysis */
+function runExtendedPatterns(fgArray, mw, logP, sol, vp, uvHL, surfaceT, sticker, rotatableBonds){
+    let allNotes = [];
+    let totalScore = 0;
+
+    const metabolism = historicalMetabolism(fgArray, mw, logP); totalScore += metabolism.score; allNotes.push(...metabolism.notes);
+    const ecotox = historicalEcotoxicology(fgArray, sol, vp, uvHL); totalScore += ecotox.score; allNotes.push(...ecotox.notes);
+    const formulation = historicalFormulation(sol, surfaceT, sticker); totalScore += formulation.score; allNotes.push(...formulation.notes);
+    const resistance = historicalResistance(fgArray, rotatableBonds); totalScore += resistance.score; allNotes.push(...resistance.notes);
+    const synergy = historicalSynergy(fgArray); totalScore += synergy.score; allNotes.push(...synergy.notes);
+
+    let prediction;
+    if(totalScore >= 8){ prediction = "ELITE / SUCCESS-LIKE"; }
+    else if(totalScore >= 4){ prediction = "MODERATE / OPTIMIZE"; }
+    else{ prediction = "HIGH FAILURE-RISK"; }
+
+    return {score: totalScore, prediction, notes: allNotes};
+}
+
+// Helper to add tags to input
+function addTag(tag) {
+    const input = document.getElementById('fg');
+    let current = input.value.split(',').map(s => s.trim()).filter(s => s !== "");
+    if(!current.includes(tag)) {
+        current.push(tag);
+        input.value = current.join(', ');
+    }
+}
+
+/* GROW-WIN 20 Functional Group Core Logic */
+function pattern20(groups){
+    let score = 0;
+    let notes = [];
+    if(groups.includes("halogen") && groups.includes("aromatic")){ score += 3; notes.push("Halogen + Aromatic → stable bioactive scaffold"); }
+    if(groups.includes("aromatic") && groups.includes("amide")){ score += 3; notes.push("Aromatic + Amide → strong biological interaction"); }
+    if(groups.includes("amine") && groups.includes("heterocycle")){ score += 3; notes.push("Amine + Heterocycle → common drug motif"); }
+    if(groups.includes("amide") && groups.includes("urea")){ score += 2; notes.push("Amide + Urea → strong hydrogen bonding"); }
+    if(groups.includes("ester") && groups.includes("aromatic")){ score += 2; notes.push("Ester + Aromatic → bioavailability scaffold"); }
+    if(groups.includes("ether") && groups.includes("aromatic")){ score += 2; notes.push("Ether + Aromatic → stable flexible structure"); }
+    if(groups.includes("hydroxyl") && groups.includes("amine")){ score += 2; notes.push("Hydroxyl + Amine → improved solubility"); }
+    if(groups.includes("carboxyl") && groups.includes("amine")){ score += 1; notes.push("Carboxyl + Amine → ionic interaction"); }
+    if(groups.includes("ketone") && groups.includes("aromatic")){ score += 2; notes.push("Ketone + Aromatic → reactive binding site"); }
+    if(groups.includes("aldehyde") && groups.includes("epoxide")){ score -= 3; notes.push("Aldehyde + Epoxide → highly reactive risk"); }
+    if(groups.includes("nitrile") && groups.includes("aromatic")){ score += 2; notes.push("Nitrile + Aromatic → lipophilic scaffold"); }
+    if(groups.includes("nitro") && groups.includes("carbamate")){ score -= 3; notes.push("Nitro + Carbamate → toxicity risk"); }
+    if(groups.includes("sulfur") && groups.includes("aromatic")){ score += 2; notes.push("Sulfur + Aromatic → bioactive sulfur motif"); }
+    if(groups.includes("sulfonamide") && groups.includes("aromatic")){ score += 3; notes.push("Sulfonamide + Aromatic → stable drug scaffold"); }
+    if(groups.includes("phosphate") && groups.includes("amine")){ score += 1; notes.push("Phosphate + Amine → ionic biological interaction"); }
+    if(groups.includes("carbamate") && groups.includes("epoxide")){ score -= 3; notes.push("Carbamate + Epoxide → instability risk"); }
+    if(groups.includes("urea") && groups.includes("aromatic")){ score += 2; notes.push("Urea + Aromatic → strong binding motif"); }
+    if(groups.includes("epoxide") && groups.includes("nitro")){ score -= 4; notes.push("Epoxide + Nitro → high toxicity/reactivity"); }
+    if(groups.includes("alkene") && groups.includes("aromatic")){ score += 1; notes.push("Alkene + Aromatic → structural rigidity"); }
+    if(groups.includes("heterocycle") && groups.includes("halogen")){ score += 3; notes.push("Heterocycle + Halogen → common agrochemical motif"); }
+
+    let result = (score >= 6) ? "HISTORICAL SUCCESS-LIKE PATTERN" : (score >= 2) ? "MODERATE / OPTIMIZE" : "FAILURE-RISK PATTERN";
+    return { score: score, prediction: result, analysis: notes };
+}
 
 function runHistoricalEngine() {
     const track = document.getElementById('targetType').value;
@@ -160,100 +262,48 @@ function runHistoricalEngine() {
     const logP = parseFloat(document.getElementById('logP').value) || 0;
     const rb = parseInt(document.getElementById('rb').value) || 0;
     const tpsa = parseFloat(document.getElementById('tpsa').value) || 0;
-    const fgInput = document.getElementById('fg').value.toLowerCase();
+    const fgRaw = document.getElementById('fg').value.toLowerCase();
+    const fgArray = fgRaw.split(',').map(s => s.trim()).filter(s => s !== "");
 
-    const vp = parseFloat(document.getElementById('vaporPressure').value) || 0; 
+    const vp = parseFloat(document.getElementById('vaporPressure').value) || 0.01;
+    const sol = parseFloat(document.getElementById('waterSolubility').value) || 0;
     const uvHL = parseFloat(document.getElementById('uvHalfLife').value) || 0; 
-    const solub = parseFloat(document.getElementById('waterSolubility').value) || 0; 
-    const koc = parseFloat(document.getElementById('koc').value) || 0; 
-    const dt50 = parseFloat(document.getElementById('dt50').value) || 0; 
     const surfaceT = parseFloat(document.getElementById('surfaceTension').value) || 0; 
     const sticker = document.getElementById('sticker').checked || false; 
 
     if(!track) { alert("Select Target Track"); return; }
 
-    let gates = [], advice = [], score = 100, designerSuggestions = [];
+    let gates = [], score = 100;
     const tgt = UNIVERSAL_TARGETS[track];
 
-    // ---------- v1.7 Designer Logic Integration ----------
+    if(mw < tgt.mw[0] || mw > tgt.mw[1]){ gates.push(`❌ MW: Size Error`); score -= 20; } else { gates.push("✅ MW: Pass"); }
+    if(logP < tgt.logP[0] || logP > tgt.logP[1]){ gates.push(`❌ LogP: Range Error`); score -= 20; } else { gates.push("✅ LogP: Pass"); }
+
+    const p20Result = pattern20(fgArray);
+    const extResult = runExtendedPatterns(fgArray, mw, logP, sol, vp, uvHL, surfaceT, sticker, rb);
     
-    // MW Designer Logic
-    if(mw < tgt.mw[0] || mw > tgt.mw[1]){
-        gates.push(`❌ MW: Size Error`);
-        advice.push(`💡 Target MW for ${track} is ${tgt.mw[0]} - ${tgt.mw[1]}.`);
-        designerSuggestions.push("🛠️ DESIGNER: Adjust core skeleton atoms (C/N) to reach optimal size.");
-        score -= 25;
-    } else { gates.push("✅ MW: Within Threshold"); }
+    // Core Engine Results
+    document.getElementById('gate-status').innerHTML = gates.map(g => `<div class="${g.includes('❌') ? 'text-red-500' : 'text-green-500'} font-bold">${g}</div>`).join('');
+    
+    document.getElementById('advisor-output').innerHTML = `
+        <div class='text-cyan-400 font-black mb-2'>${p20Result.prediction} (P20 Score: ${p20Result.score})</div>
+        ${p20Result.analysis.map(n => `<div class='text-blue-300'>💡 ${n}</div>`).join('')}
+    `;
 
-    // LogP Designer Logic
-    if(logP < tgt.logP[0] || logP > tgt.logP[1]){
-        gates.push(`❌ LogP: Range Error`);
-        advice.push(`💡 Target Range for ${track} is ${tgt.logP[0]} - ${tgt.logP[1]}.`);
-        designerSuggestions.push("🛠️ DESIGNER: Add Halogens to increase LogP or Hydroxyl groups to decrease it.");
-        score -= 25;
-    } else { gates.push("✅ LogP: Within Threshold"); }
+    // Extended Insights Result
+    document.getElementById('designer-output').innerHTML = `
+        <div class='text-yellow-500 font-bold mb-1'>Extended Logic: ${extResult.prediction} (Score: ${extResult.score})</div>
+        ${extResult.notes.map(s => `<div class='border-l-2 border-cyan-500 pl-2 text-cyan-200'>• ${s}</div>`).join('')}
+    `;
 
-    if(tpsa > 140){ gates.push("❌ TPSA: Polar Barrier"); advice.push("💡 Too polar for membrane entry."); score -= 15; }
-    if(rb > 10){ gates.push("❌ RB: High Entropy"); advice.push("💡 Increase rigidity for target docking."); score -= 20; }
-
-    // Historical Patterns
-    HISTORICAL_PATTERNS.forEach(p => {
-        if(fgInput.includes(p.fg)){
-            if(!p.target || p.target === track){
-                if(p.result === "FAIL"){
-                    score -= 30;
-                    gates.push(`❌ FG-RISK: ${p.fg.toUpperCase()}`);
-                    advice.push(`💡 Historical Failure: ${p.reason}`);
-                    designerSuggestions.push(`🛠️ REPLACEMENT: Swap ${p.fg.toUpperCase()} with ${p.suggest} for stability.`);
-                } else {
-                    score += 5;
-                    gates.push(`✅ FG-BENEFIT: ${p.fg.toUpperCase()}`);
-                    advice.push(`🛡️ Historical Success: ${p.reason}`);
-                }
-            }
-        }
-    });
-
-    // UV & Climate Designer Logic
-    if(uvHL < 12) {
-        gates.push("❌ UV-STABILITY: Likely photodegradation");
-        advice.push("💡 UV LOGIC: Molecule may degrade under sun; add UV-stable groups.");
-        designerSuggestions.push("🛠️ SHIELDING: Integrate a Phenyl/Benzene ring to absorb UV energy.");
-        score -= 15;
-    } else { gates.push("✅ UV-STABILITY: Stable"); }
-
-    // Physics & Surface Tension Logic
-    if(!sticker && surfaceT < 30) {
-        gates.push("❌ PHYSICS: Poor Leaf Coverage");
-        designerSuggestions.push("🛠️ FORMULATION: Compulsory use of Silicone-based Adjuvant detected.");
-        score -= 10;
-    } else { gates.push("✅ PHYSICS: Leaf Coverage OK"); }
-
-    // Render Gates & Advice
-    document.getElementById('gate-status').innerHTML = gates.map(g => 
-        `<div class="${g.includes('❌') ? 'text-red-500' : 'text-green-500'} font-bold">${g}</div>`
-    ).join('');
-
-    document.getElementById('advisor-output').innerHTML = advice.length > 0 ? 
-        advice.map(a => `<div class="mb-1 text-blue-400 font-bold">${a}</div>`).join('') : 
-        "<div class='text-green-500 font-bold'>🌟 ELITE PATTERN: Optimal molecular & field profile detected.</div>";
-
-    // Render v1.7 Designer Output
-    document.getElementById('designer-output').innerHTML = designerSuggestions.length > 0 ?
-        designerSuggestions.map(s => `<div class='border-l-2 border-cyan-500 pl-2 text-cyan-200'>${s}</div>`).join('') :
-        "<div class='text-green-400'>✅ Structure is optimized for target track success.</div>";
-
-    const finalScore = Math.min(100, Math.max(0, score));
+    // Calculation logic for final visual score
+    let finalScoreCalculation = score + (p20Result.score * 5) + (extResult.score * 2);
+    const finalScore = Math.min(100, Math.max(0, finalScoreCalculation));
     document.getElementById('final-score').innerText = finalScore + "%";
     
-    let status = "REJECT"; let color = "#f85149";
-    if (finalScore >= 80) { status = "PASS (ELITE)"; color = "#2ea44f"; }
-    else if (finalScore >= 50) { status = "OPTIMIZE"; color = "#f2cc60"; }
-    else { status = "REJECT"; color = "#f85149"; }
-    
+    let status = finalScore >= 80 ? "PASS (ELITE)" : (finalScore >= 50 ? "OPTIMIZE" : "REJECT");
     document.getElementById('status-label').innerText = status;
-    document.getElementById('status-label').style.color = color;
-    document.getElementById('final-score').style.color = color;
+    document.getElementById('status-label').style.color = (status === "PASS (ELITE)") ? "#2ea44f" : (status === "OPTIMIZE" ? "#f2cc60" : "#f85149");
 }
 </script>
 </body>
