@@ -141,7 +141,7 @@ body { background: #0a0c10; color: #e6edf3; font-family: 'Inter', sans-serif; fo
 
 <script>
 // ==========================================
-// GROW-WIN Agri-Logic Engine v1.8.0 
+// GROW-WIN Agri-Logic Engine v1.8.0 
 // ==========================================
 
 const UNIVERSAL_TARGETS = {
@@ -198,6 +198,61 @@ function historicalSynergy(fgArray){
     return {score, notes};
 }
 
+/* New Failure Logic Module */
+function runExtendedFailureLogic(data) {
+    let score = 0;
+    let insights = [];
+
+    /* 1. Plant Metabolism Risk */
+    if (data.logP > 5 || data.logP < -1) {
+        score -= 2;
+        insights.push("Metabolism imbalance → poor plant uptake or slow metabolism");
+    }
+
+    /* 2. Environmental Fate */
+    if (data.solubility > 100000) {
+        score -= 2;
+        insights.push("High solubility → environmental mobility risk");
+    }
+
+    if (data.vp < 0.000001) {
+        score -= 1;
+        insights.push("Low volatility → persistence in soil");
+    }
+
+    /* 3. Toxicology Pattern */
+    if (data.groups.includes("nitro") && data.groups.includes("carbamate")) {
+        score -= 3;
+        insights.push("Nitro + Carbamate → toxicity risk pattern");
+    }
+
+    /* 4. Formulation Difficulty */
+    if (data.solubility < 5) {
+        score -= 1;
+        insights.push("Low solubility → formulation difficulty");
+    }
+
+    /* 5. Resistance Risk */
+    if (data.groups.includes("aromatic") && data.groups.includes("halogen")) {
+        score -= 1;
+        insights.push("Common motif → possible cross-resistance risk");
+    }
+
+    /* 6. Crop Selectivity Risk */
+    if (data.tpsa < 10 && data.logP > 4) {
+        score -= 2;
+        insights.push("Low polarity + high lipophilicity → crop toxicity risk");
+    }
+
+    /* 7. Stability Failure */
+    if (data.uvhl < 12) {
+        score -= 2;
+        insights.push("Low photostability → breakdown products risk");
+    }
+
+    return { score: score, insights: insights };
+}
+
 /* Combined 5-module historical analysis */
 function runExtendedPatterns(fgArray, mw, logP, sol, vp, uvHL, surfaceT, sticker, rotatableBonds){
     let allNotes = [];
@@ -217,7 +272,6 @@ function runExtendedPatterns(fgArray, mw, logP, sol, vp, uvHL, surfaceT, sticker
     return {score: totalScore, prediction, notes: allNotes};
 }
 
-// Helper to add tags to input
 function addTag(tag) {
     const input = document.getElementById('fg');
     let current = input.value.split(',').map(s => s.trim()).filter(s => s !== "");
@@ -227,10 +281,8 @@ function addTag(tag) {
     }
 }
 
-/* GROW-WIN 20 Functional Group Core Logic */
 function pattern20(groups){
-    let score = 0;
-    let notes = [];
+    let score = 0, notes = [];
     if(groups.includes("halogen") && groups.includes("aromatic")){ score += 3; notes.push("Halogen + Aromatic → stable bioactive scaffold"); }
     if(groups.includes("aromatic") && groups.includes("amide")){ score += 3; notes.push("Aromatic + Amide → strong biological interaction"); }
     if(groups.includes("amine") && groups.includes("heterocycle")){ score += 3; notes.push("Amine + Heterocycle → common drug motif"); }
@@ -273,34 +325,29 @@ function runHistoricalEngine() {
 
     if(!track) { alert("Select Target Track"); return; }
 
-    let gates = [], score = 100;
-    const tgt = UNIVERSAL_TARGETS[track];
-
-    if(mw < tgt.mw[0] || mw > tgt.mw[1]){ gates.push(`❌ MW: Size Error`); score -= 20; } else { gates.push("✅ MW: Pass"); }
-    if(logP < tgt.logP[0] || logP > tgt.logP[1]){ gates.push(`❌ LogP: Range Error`); score -= 20; } else { gates.push("✅ LogP: Pass"); }
-
+    const failureData = { logP: logP, solubility: sol, vp: vp, groups: fgArray, tpsa: tpsa, uvhl: uvHL };
+    const failResult = runExtendedFailureLogic(failureData);
     const p20Result = pattern20(fgArray);
     const extResult = runExtendedPatterns(fgArray, mw, logP, sol, vp, uvHL, surfaceT, sticker, rb);
-    
-    // Core Engine Results
-    document.getElementById('gate-status').innerHTML = gates.map(g => `<div class="${g.includes('❌') ? 'text-red-500' : 'text-green-500'} font-bold">${g}</div>`).join('');
+
+    document.getElementById('gate-status').innerHTML = (mw < UNIVERSAL_TARGETS[track].mw[0] || mw > UNIVERSAL_TARGETS[track].mw[1] ? "<div class='text-red-500 font-bold'>❌ MW: Range Error</div>" : "<div class='text-green-500 font-bold'>✅ MW: Pass</div>") +
+                                                     (logP < UNIVERSAL_TARGETS[track].logP[0] || logP > UNIVERSAL_TARGETS[track].logP[1] ? "<div class='text-red-500 font-bold'>❌ LogP: Range Error</div>" : "<div class='text-green-500 font-bold'>✅ LogP: Pass</div>");
     
     document.getElementById('advisor-output').innerHTML = `
-        <div class='text-cyan-400 font-black mb-2'>${p20Result.prediction} (P20 Score: ${p20Result.score})</div>
+        <div class='text-cyan-400 font-black mb-2'>${p20Result.prediction}</div>
         ${p20Result.analysis.map(n => `<div class='text-blue-300'>💡 ${n}</div>`).join('')}
     `;
 
-    // Extended Insights Result
     document.getElementById('designer-output').innerHTML = `
-        <div class='text-yellow-500 font-bold mb-1'>Extended Logic: ${extResult.prediction} (Score: ${extResult.score})</div>
+        <div class='text-yellow-500 font-bold mb-1'>Failure Logic Analysis:</div>
+        ${failResult.insights.map(s => `<div class='border-l-2 border-red-500 pl-2 text-red-300'>• ${s}</div>`).join('')}
+        <div class='text-cyan-500 font-bold mt-2 mb-1'>Growth Patterns:</div>
         ${extResult.notes.map(s => `<div class='border-l-2 border-cyan-500 pl-2 text-cyan-200'>• ${s}</div>`).join('')}
     `;
 
-    // Calculation logic for final visual score
-    let finalScoreCalculation = score + (p20Result.score * 5) + (extResult.score * 2);
-    const finalScore = Math.min(100, Math.max(0, finalScoreCalculation));
+    let finalScoreCalc = 100 + (p20Result.score * 5) + (extResult.score * 2) + (failResult.score * 5);
+    const finalScore = Math.min(100, Math.max(0, finalScoreCalc));
     document.getElementById('final-score').innerText = finalScore + "%";
-    
     let status = finalScore >= 80 ? "PASS (ELITE)" : (finalScore >= 50 ? "OPTIMIZE" : "REJECT");
     document.getElementById('status-label').innerText = status;
     document.getElementById('status-label').style.color = (status === "PASS (ELITE)") ? "#2ea44f" : (status === "OPTIMIZE" ? "#f2cc60" : "#f85149");
