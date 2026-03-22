@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GROW-WIN · AGRI-LOGIC ENGINE v1.0 (COMPLETE)</title>
+<title>GROW-WIN · AGRI-LOGIC ENGINE v1.9.5 (COMPLETE)</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
@@ -19,9 +19,9 @@ body { background: #0a0c10; color: #e6edf3; font-family: 'Inter', sans-serif; fo
 .designer-box { border: 1px solid #3a3f4b; background: #0d1117; border-radius: 1rem; padding: 12px; margin-top: 15px; }
 .result-box { background: #161b22; border: 1px solid #30363d; border-radius: 1rem; padding: 15px; }
 .watermark { text-align: center; margin-top: 2rem; font-size: 10px; color: #30363d; letter-spacing: 2px; font-weight: bold; }
-
 .fg-tag { background: #161b22; border: 1px solid #30363d; color: #8b949e; padding: 4px 10px; border-radius: 6px; font-size: 10px; cursor: pointer; transition: 0.2s; font-weight: 600; }
 .fg-tag:hover { border-color: #2ea44f; color: #2ea44f; background: #0d1117; }
+.suggestion-btn { font-size: 9px; background: #238636; color: white; padding: 2px 6px; border-radius: 4px; margin-left: 5px; cursor: pointer; }
 </style>
 </head>
 <body class="p-6">
@@ -29,7 +29,7 @@ body { background: #0a0c10; color: #e6edf3; font-family: 'Inter', sans-serif; fo
 <div class="max-w-[1200px] mx-auto">
     <div class="text-center mb-8">
         <h1 class="text-4xl font-black tracking-tighter uppercase"> GROW-WIN <span class="text-[#2ea44f]">Agri-Logic Engine</span></h1>
-        <p class="text-xs text-gray-500 mt-1 tracking-widest uppercase">Logic-Based Computing · v1.0 (Verified Patch)</p>
+        <p class="text-xs text-gray-500 mt-1 tracking-widest uppercase">100-Year Logic-Based Computing · v1.9.5 (Discovery Edition)</p>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -152,7 +152,7 @@ body { background: #0a0c10; color: #e6edf3; font-family: 'Inter', sans-serif; fo
         </div>
 
         <div class="card p-6 border-l-4 border-yellow-500 lg:col-span-2">
-            <h2 class="section-title">Pattern Intelligence & Advice</h2>
+            <h2 class="section-title">Pattern Intelligence & Discovery</h2>
             <div class="brain-box text-sm leading-relaxed mb-4" id="advisor-output">Engine Ready...</div>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -173,7 +173,7 @@ body { background: #0a0c10; color: #e6edf3; font-family: 'Inter', sans-serif; fo
             </div>
         </div>
     </div>
-    <div class="watermark">DESIGNED BY UDAYANA ANANTH KUMAR · GROW-WIN </div>
+    <div class="watermark">DESIGNED BY UDAYANA ANANTH KUMAR · GROW-WIN R&D</div>
 </div>
 
 <script>
@@ -205,32 +205,55 @@ function runHistoricalEngine() {
 
     let score = 92; 
     let insights = [];
+    let suggestions = [];
+    let moaClass = "Unclassified Molecule";
     let hardFail = false;
 
     // --- LOGIC RULES ---
     if(fgArray.includes("epoxide") && fgArray.includes("halogen")) { score = 15; insights.push("❌ POP RISK: Banned pattern (Endosulfan class)."); hardFail = true; }
-    if(fgArray.includes("carbamate") && fgArray.includes("alkene")) { score = 10; insights.push("❌ CRITICAL: Carbamate + Alkene extreme toxicity (Aldicarb class)."); hardFail = true; }
+    if(fgArray.includes("carbamate") && fgArray.includes("alkene")) { score = 10; insights.push("❌ CRITICAL: Carbamate + Alkene extreme toxicity."); hardFail = true; }
     if(fgArray.includes("aldehyde")) { score -= 15; insights.push("⚠️ Toxicity Alert: Reactive aldehyde detected."); }
 
     if(track === "FERTILIZER") {
-        // Updated Solubility Logic for Extreme Cases (Ammonium Nitrate Fix)
-        if(sol > 500000) { score -= 55; insights.push("❌ EXTREME LEACHING — Sol " + sol + " mg/L. Immediate groundwater runoff risk."); }
-        else if(sol > 50000 && rainfall > 30) { score -= 35; insights.push("❌ HIGH LEACHING RISK: Soil retention insufficient."); }
-        else if(sol > 10000 && rainfall > 50) { score -= 20; insights.push("⚠️ Leaching detected: High rainfall environment."); }
+        moaClass = "Nutrient / Fertilizer Scaffold";
+        if(sol > 500000) { score -= 55; insights.push("❌ EXTREME LEACHING — Immediate runoff."); }
+        else if(sol > 50000 && rainfall > 30) { score -= 35; insights.push("❌ HIGH LEACHING RISK"); }
+        else if(sol > 10000 && rainfall > 50) { score -= 20; insights.push("⚠️ Leaching risk detected"); }
+        if(vp > 0.1) { score -= 25; insights.push("❌ High VP: Ammonia loss risk."); }
 
-        if(vp > 0.1) { score -= 25; insights.push("❌ High VP: Ammonia volatilization risk to atmosphere."); }
-        if(fgArray.includes("triazine") && fgArray.includes("urea")) { score += 10; insights.push("✅ N-Cage: Triazine controlled release active."); }
-        if(fgArray.includes("methylene") && fgArray.includes("urea")) { score += 12; insights.push("✅ Linker: Methylene-urea slow release chain."); }
-        if(fgArray.includes("humic acid")) { score += 15; insights.push("✅ Carbon Scaffold: Humic acid uptake boost."); }
-        if(soilPH > 7.5 && fgArray.includes("ammonium")) { score -= 20; insights.push("⚠️ Alkaline pH: High loss of nitrogen via gas."); }
+        if(fgArray.includes("triazine") && fgArray.includes("urea")) { score += 10; insights.push("✅ N-Cage: Controlled release active."); moaClass = "N-Logic Cage · Controlled Release"; }
+        if(fgArray.includes("methylene") && fgArray.includes("urea")) { score += 12; insights.push("✅ Linker: Slow release chain."); moaClass = "Methylene-Urea Matrix"; }
+        if(fgArray.includes("humic acid")) { score += 15; insights.push("✅ Carbon Scaffold: Humic boost."); }
+        
+        // Suggestion Engine
+        if(score < 50) {
+            if(sol > 50000) suggestions.push("→ Add <b>Carboxyl</b> group to anchor molecule to soil.");
+            if(vp > 0.1) suggestions.push("→ Add <b>Polymer Chain</b> coating to lock ammonia.");
+            if(fgArray.includes('phosphate') && !fgArray.includes('chelating group')) suggestions.push("→ Add <b>Chelating Group</b> to prevent P-fixation.");
+            if(soilPH > 7.5) suggestions.push("→ Add <b>Sulfate</b> group to acidify micro-environment.");
+        }
     } else {
-        if(fgArray.includes("pyridine") && fgArray.includes("nitrile")) { score += 10; insights.push("✅ nAChR Scaffold: Neonicotinoid-like pattern."); }
-        if(fgArray.includes("triazole") && fgArray.includes("halogen")) { score += 10; insights.push("✅ DMI Scaffold: Azole fungicide pattern."); }
-        if(fgArray.includes("fluorine") && fgArray.includes("amide")) { score += 12; insights.push("✅ Modern SDHI: Metabolic block pattern."); }
+        if(fgArray.includes("pyridine") && fgArray.includes("nitrile")) { score += 10; moaClass = "nAChR Agonist · IRAC 4A"; }
+        if(fgArray.includes("triazole") && fgArray.includes("halogen")) { score += 10; moaClass = "DMI Fungicide · FRAC 3"; }
+        if(fgArray.includes("fluorine") && fgArray.includes("amide")) { score += 12; moaClass = "Modern SDHI Scaffold"; }
     }
 
-    const finalScore = Math.min(95, Math.max(0, score));
-    document.getElementById('final-score').innerText = (hardFail ? Math.min(20, finalScore) : finalScore) + "%";
+    const finalScore = Math.min(95, Math.max(0, (hardFail ? Math.min(20, score) : score)));
+    const waste = 100 - finalScore;
+    
+    // Pattern Intelligence Output
+    document.getElementById('advisor-output').innerHTML = `
+        <div class="text-green-400 font-bold mb-2">TRACK: ${track} · ${moaClass}</div>
+        <div class="space-y-1">
+            <div>Current Efficiency: ${finalScore}%</div>
+            <div>Estimated Waste: ${waste}%</div>
+            <hr class="border-gray-800 my-2">
+            <div class="text-yellow-500 font-bold">DISCOVERY PATHWAY:</div>
+            ${suggestions.length > 0 ? suggestions.map(s => `<div>${s} <span class="suggestion-btn" onclick="addTag('${s.split('<b>')[1].split('</b>')[0].toLowerCase()}')">APPLY</span></div>`).join('') : '<div>✅ Molecule Optimized.</div>'}
+        </div>
+    `;
+
+    document.getElementById('final-score').innerText = finalScore + "%";
     document.getElementById('designer-output').innerHTML = insights.map(i => `<div>• ${i}</div>`).join('');
     
     const target = UNIVERSAL_TARGETS[track];
