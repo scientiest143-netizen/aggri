@@ -498,10 +498,17 @@ function runEngine() {
       insights.push("✅ Modern SDHI scaffold — Fluorine + Amide = Fluopyram/Boscalid class. FRAC Group 7.");
       gateLines.push('<div class="text-green-500">✅ MOA: SDHI fungicide detected</div>');
     }
-    if (fg.includes("amide") && fg.includes("halogen") && fg.includes("heterocycle")) {
+
+    // ── FIXED BOSCALID / DIAMIDE TRACK CHECK ──
+    if (fg.includes("amide") && fg.includes("halogen") && fg.includes("heterocycle") && track === "INSECTICIDE") {
       score += 8; moaClass = "Diamide · IRAC 28 · Chlorantraniliprole Class";
       insights.push("✅ Diamide scaffold — Amide + Halogen + Heterocycle = Chlorantraniliprole class. IRAC Group 28.");
     }
+    if (fg.includes("amide") && fg.includes("halogen") && fg.includes("heterocycle") && track === "FUNGICIDE") {
+      score += 8; moaClass = "SDHI Fungicide · FRAC 7 · Boscalid Class";
+      insights.push("✅ SDHI scaffold — Amide + Halogen + Heterocycle = Boscalid class. FRAC Group 7.");
+    }
+    
     if (fg.includes("ester") && fg.includes("ether") && fg.includes("aromatic")) {
       score += 8; moaClass = "QoI Strobilurin · FRAC 11 · Azoxystrobin Class";
       insights.push("✅ Strobilurin scaffold — Ester + Ether + Aromatic = Azoxystrobin class. FRAC Group 11.");
