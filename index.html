@@ -230,7 +230,7 @@ const TARGETS = {
   HERBICIDE:   {logP:[-5,4], mw:[100,450]},
   NEMATICIDE:  {logP:[1,4],  mw:[100,400]},
   ACARICIDE:   {logP:[2,6],  mw:[150,550]},
-  PGR:         {logP:[0.5,4],mw:[100,350]},
+  PGR:          {logP:[0.5,4],mw:[100,350]},
   BACTERICIDE: {logP:[0,2.5],mw:[120,450]},
   FERTILIZER:  {logP:[-2,3], mw:[60,1000]}
 };
@@ -287,13 +287,19 @@ function runEngine() {
   const mwOk = mw >= tgt.mw[0] && mw <= tgt.mw[1];
   if (mw > 0) {
     gateLines.push(`<div class="${mwOk?'text-green-500':'text-red-400'}">${mwOk?'✅':'❌'} MW: ${mw} Da ${mwOk?'PASS':'FAIL'}</div>`);
-    if (!mwOk) score -= 15;
+    if (!mwOk) {
+        score -= 15;
+        insights.push("• MW Alert: Molecular weight outside biological range.");
+    }
   }
 
   const lpOk = logP >= tgt.logP[0] && logP <= tgt.logP[1];
   if (logP !== 0) {
     gateLines.push(`<div class="${lpOk?'text-green-500':'text-red-400'}">${lpOk?'✅':'❌'} LogP: ${logP} ${lpOk?'PASS':'REJECT'}</div>`);
-    if (!lpOk) score -= 20;
+    if (!lpOk) {
+        score -= 20;
+        insights.push("• LogP Alert: Lipophilicity check failed.");
+    }
   }
 
   // --- PRESERVED ORIGINAL PESTICIDE LOGIC ---
@@ -302,28 +308,40 @@ function runEngine() {
           score = 15;
           insights.push("• ❌ POP RISK: Epoxide + Halogen = Persistent Organic Pollutant pattern. Banned globally.");
           gateLines.push('<div class="text-red-500">❌ PATTERN: POP Ban Signal Detected</div>');
+          
+          // ఇక్కడ కొత్త సలహాను జోడిస్తున్నాము (Only suggestion for REJECT status)
+          suggestions.push({txt:"Critical Fix: Remove <b>Epoxide</b> to clear POP Ban Signal", group:"epoxide"});
+      }
+      
+      // Example Suggestion Logic for Pesticides:
+      if (score < 80 && score > 15 && !fg.includes('halogen') && !fg.includes('fluorine')) {
+          suggestions.push({txt:"Add <b>Fluorine</b> (Bio-Isostere Optimization)", group:"fluorine"});
       }
   }
 
-  // --- INTEGRATED FERTILIZER LOGIC ---
+  // --- INTEGRATED FERTILIZER LOGIC WITH OPTIMIZATION ---
   if (track === "FERTILIZER") {
     moaClass = "Nutrient / Fertilizer Scaffold";
-    if (fg.includes("urea") || fg.includes("phosphate")) {
+    if (fg.includes("urea") || fg.includes("phosphate") || mw > 0) {
         if (sol > 100000 && !fg.includes("polymer chain")) {
             score -= 25;
             insights.push("❌ HIGH SOLUBILITY: Rapid leaching risk detected.");
-            suggestions.push({txt:"Add <b>Polymer Chain</b>", group:"polymer chain"});
+            suggestions.push({txt:"Add <b>Polymer Chain</b> (Controlled Release)", group:"polymer chain"});
         }
         if (soilPH > 7.4 && fg.includes("urea") && !fg.includes("nbpt")) {
             score -= 20;
             insights.push("❌ ALKALINE LOSS: Ammonia volatilization risk.");
-            suggestions.push({txt:"Add <b>NBPT</b>", group:"nbpt"});
+            suggestions.push({txt:"Add <b>NBPT</b> (Urease Inhibitor)", group:"nbpt"});
+        }
+        if (!fg.includes("humic acid") && !fg.includes("fulvic acid")) {
+            suggestions.push({txt:"Add <b>Humic/Fulvic Acid</b> (Carbon Chelation)", group:"humic acid"});
         }
     }
-    // RECOVERY LOGIC
+    // RECOVERY LOGIC (Bonus for optimizations)
     if (fg.includes("nbpt")) score += 18;
     if (fg.includes("polymer chain")) score += 22;
     if (fg.includes("edta") || fg.includes("eddha")) score += 15;
+    if (fg.includes("humic acid")) score += 10;
   }
 
   const finalScore = Math.min(98, Math.max(0, score));
@@ -342,13 +360,29 @@ function runEngine() {
   document.getElementById('metricsRow').style.cssText = 'display:grid!important;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px;';
   document.getElementById('moaRow').style.display = 'block';
   document.getElementById('moaBadge').innerText = moaClass;
-  document.getElementById('gate-status').innerHTML = gateLines.join('');
-  document.getElementById('designer-output').innerHTML = insights.map(i => `<div>${i}</div>`).join('') || '—';
-  document.getElementById('advisor-output').innerHTML = `
+  document.getElementById('gate-status').innerHTML = gateLines.length > 0 ? gateLines.join('') : '<div style="color:#4a5568;">Awaiting input...</div>';
+  document.getElementById('designer-output').innerHTML = insights.map(i => `<div>${i}</div>`).join('') || '<div style="color:#4a5568;">No flags detected.</div>';
+  
+  // SUGGESTION OUTPUT
+  let advisorContent = `
     <div style="color:#2ea44f;font-weight:900;">TRACK: ${track}</div>
-    <div>Logic Score: ${finalScore}%</div>
-    <div class="mt-2">${suggestions.map(s => `<div>• ${s.txt} <button class="suggestion-btn" onclick="applyGroup('${s.group}')">APPLY +</button></div>`).join('')}</div>
+    <div class="mb-2">Logic Score: ${finalScore}%</div>
   `;
+  
+  if (suggestions.length > 0 && finalScore < 98) {
+      advisorContent += `<div class="mt-2 text-yellow-500 font-bold uppercase text-[10px]">Optimization Pathway:</div>`;
+      advisorContent += suggestions.map(s => `
+        <div class="mt-1">• ${s.txt} 
+          <button class="suggestion-btn" onclick="applyGroup('${s.group}')">APPLY +</button>
+        </div>
+      `).join('');
+  } else if (finalScore >= 98) {
+      advisorContent += `<div class="mt-4 p-2 border border-[#2ea44f44] bg-[#2ea44f11] text-center text-[#2ea44f] font-bold rounded">ELITE MOLECULE DETECTED</div>`;
+  } else {
+      advisorContent += `<div class="mt-2" style="color:#4a5568;">No further suggestions.</div>`;
+  }
+  
+  document.getElementById('advisor-output').innerHTML = advisorContent;
 }
 
 function applyGroup(group) {
