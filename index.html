@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GROW-WIN · AGRI-LOGIC ENGINE v1.0 (DISCOVERY COMPLETE)</title>
+<title>GROW-WIN · AGRI-LOGIC ENGINE v1.1 (INDUSTRIAL GRADE)</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
@@ -33,7 +33,7 @@ body { background: #0a0c10; color: #e6edf3; font-family: 'Inter', sans-serif; fo
 <div class="max-w-[1300px] mx-auto">
   <div class="text-center mb-8">
     <h1 class="text-4xl font-black tracking-tighter uppercase">GROW-WIN <span class="text-[#2ea44f]">Agri-Logic Engine</span></h1>
-    <p class="text-xs text-gray-500 mt-1 tracking-widest uppercase">Logic-Based Computing · v1.0 (Discovery Complete Edition)</p>
+    <p class="text-xs text-gray-500 mt-1 tracking-widest uppercase">Logic-Based Computing · v1.1 (Industrial Grade)</p>
   </div>
 
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -220,19 +220,19 @@ body { background: #0a0c10; color: #e6edf3; font-family: 'Inter', sans-serif; fo
     </div>
   </div>
 
-  <div class="watermark">DESIGNED BY UDAYANA ANANTH KUMAR · GROW-WIN R&D · v1.0 DISCOVERY COMPLETE EDITION</div>
+  <div class="watermark">DESIGNED BY UDAYANA ANANTH KUMAR · GROW-WIN R&D · v1.1 INDUSTRIAL GRADE</div>
 </div>
 
 <script>
 const TARGETS = {
-  INSECTICIDE: {logP:[-1,7], mw:[150,550]},
-  FUNGICIDE:   {logP:[0,5],  mw:[120,500]},
-  HERBICIDE:   {logP:[-5,4], mw:[100,450]},
-  NEMATICIDE:  {logP:[1,4],  mw:[100,400]},
-  ACARICIDE:   {logP:[2,6],  mw:[150,550]},
-  PGR:          {logP:[0.5,4],mw:[100,350]},
-  BACTERICIDE: {logP:[0,2.5],mw:[120,450]},
-  FERTILIZER:  {logP:[-2,3], mw:[60,1000]}
+  INSECTICIDE: {logP:[1.5,4.5], mw:[150,550]},
+  FUNGICIDE:   {logP:[1.0,5.0], mw:[120,500]},
+  HERBICIDE:   {logP:[-1.0,3.5], mw:[100,450]},
+  NEMATICIDE:  {logP:[1.0,4.0],  mw:[100,400]},
+  ACARICIDE:   {logP:[2.0,6.0],  mw:[150,550]},
+  PGR:           {logP:[0.5,3.5], mw:[100,350]},
+  BACTERICIDE: {logP:[0.0,2.5], mw:[120,450]},
+  FERTILIZER:  {logP:[-2.0,3.0], mw:[60,1000]}
 };
 
 function toggleFertGroups() {
@@ -274,79 +274,91 @@ function runEngine() {
   const fg      = fgRaw.split(',').map(s => s.trim()).filter(s => s !== "");
   const soilPH  = parseFloat(document.getElementById('soilPH').value) || 7.0;
   const sol     = parseFloat(document.getElementById('waterSolubility').value) || 0;
+  const rain    = parseFloat(document.getElementById('rainfall').value) || 0;
+  const uv      = parseFloat(document.getElementById('uvHalfLife').value) || 0;
+  const vp      = parseFloat(document.getElementById('vaporPressure').value) || 0;
+  const release = document.getElementById('releaseType').value;
 
   if (!track) { alert("Select Target Track first"); return; }
 
-  let score = 85; 
+  // --- INDUSTRIAL BALANCING: START AT 65 ---
+  let score = 65; 
   let insights = [];
-  let suggestions = [];
   let gateLines = [];
   let moaClass = "Unclassified Molecule";
 
   const tgt = TARGETS[track];
-  const mwOk = mw >= tgt.mw[0] && mw <= tgt.mw[1];
+
+  // 1. MW Logic
   if (mw > 0) {
-    gateLines.push(`<div class="${mwOk?'text-green-500':'text-red-400'}">${mwOk?'✅':'❌'} MW: ${mw} Da ${mwOk?'PASS':'FAIL'}</div>`);
-    if (!mwOk) {
-        score -= 15;
-        insights.push("• MW Alert: Molecular weight outside biological range.");
-    }
+    const mwOk = mw >= tgt.mw[0] && mw <= tgt.mw[1];
+    gateLines.push(`<div class="${mwOk?'text-green-500':'text-red-400'}">${mwOk?'✅':'❌'} MW: ${mw} Da ${mwOk?'PASS':'OUT-OF-BOUNDS'}</div>`);
+    if (!mwOk) score -= 10;
   }
 
-  const lpOk = logP >= tgt.logP[0] && logP <= tgt.logP[1];
+  // 2. Stability Logic (Advanced)
+  if (uv >= 24 || release === "encapsulated") {
+      score += 10;
+      insights.push("✅ PHOTODURABLE: High stability or protected formulation.");
+  } else if (uv > 0 && uv < 12) {
+      score -= 15;
+      insights.push("❌ UV SENSITIVE: Rapid degradation risk.");
+  }
+
+  if (vp > 0 && vp < 0.00001) {
+      score += 5;
+      insights.push("✅ NON-VOLATILE: Minimal loss to atmospheric drift.");
+  }
+
+  // 3. Systemic & LogP Logic
   if (logP !== 0) {
-    gateLines.push(`<div class="${lpOk?'text-green-500':'text-red-400'}">${lpOk?'✅':'❌'} LogP: ${logP} ${lpOk?'PASS':'REJECT'}</div>`);
-    if (!lpOk) {
-        score -= 20;
-        insights.push("• LogP Alert: Lipophilicity check failed.");
+    const lpOk = logP >= tgt.logP[0] && logP <= tgt.logP[1];
+    if (logP < 1 && sol > 200 && track === "INSECTICIDE") {
+        score += 10;
+        insights.push("✅ SYSTEMIC MODE: High vascular mobility potential.");
+        moaClass = "Systemic Core";
+    } else if (!lpOk) {
+        score -= 10;
+        insights.push("⚠️ LOGP ALERT: Sub-optimal biological penetration.");
     }
   }
 
-  // --- PRESERVED ORIGINAL PESTICIDE LOGIC ---
-  if (track !== "FERTILIZER") {
-      if (fg.includes('epoxide') && fg.includes('halogen')) {
-          score = 15;
-          insights.push("• ❌ POP RISK: Epoxide + Halogen = Persistent Organic Pollutant pattern. Banned globally.");
-          gateLines.push('<div class="text-red-500">❌ PATTERN: POP Ban Signal Detected</div>');
-          
-          // ఇక్కడ కొత్త సలహాను జోడిస్తున్నాము (Only suggestion for REJECT status)
-          suggestions.push({txt:"Critical Fix: Remove <b>Epoxide</b> to clear POP Ban Signal", group:"epoxide"});
-      }
-      
-      // Example Suggestion Logic for Pesticides:
-      if (score < 80 && score > 15 && !fg.includes('halogen') && !fg.includes('fluorine')) {
-          suggestions.push({txt:"Add <b>Fluorine</b> (Bio-Isostere Optimization)", group:"fluorine"});
-      }
+  // 4. Environmental Resilience
+  if (sol > 500 && rain > 10 && !fg.includes("polymer chain")) {
+      score -= 20;
+      insights.push("❌ WASH-OFF RISK: Poor rainfastness detected.");
+  } else if (fg.includes("polymer chain")) {
+      score += 15;
+      insights.push("✅ ADHESIVE SHIELD: Enhanced rainfastness / Residual activity.");
   }
 
-  // --- INTEGRATED FERTILIZER LOGIC WITH OPTIMIZATION ---
+  // 5. Bio-Enhancement Logic
+  if (fg.includes('fluorine')) {
+      score += 12;
+      insights.push("✅ METABOLIC SHIELD: Fluorine provides bio-isostere advantage.");
+  }
+  if (fg.includes('methylene') && logP > 3) {
+      score += 8;
+      insights.push("✅ PERMEABILITY: Methylene bridge aids wax penetration.");
+  }
+
+  // 6. Fertilizer Engine
   if (track === "FERTILIZER") {
-    moaClass = "Nutrient / Fertilizer Scaffold";
-    if (fg.includes("urea") || fg.includes("phosphate") || mw > 0) {
-        if (sol > 100000 && !fg.includes("polymer chain")) {
-            score -= 25;
-            insights.push("❌ HIGH SOLUBILITY: Rapid leaching risk detected.");
-            suggestions.push({txt:"Add <b>Polymer Chain</b> (Controlled Release)", group:"polymer chain"});
-        }
-        if (soilPH > 7.4 && fg.includes("urea") && !fg.includes("nbpt")) {
-            score -= 20;
-            insights.push("❌ ALKALINE LOSS: Ammonia volatilization risk.");
-            suggestions.push({txt:"Add <b>NBPT</b> (Urease Inhibitor)", group:"nbpt"});
-        }
-        if (!fg.includes("humic acid") && !fg.includes("fulvic acid")) {
-            suggestions.push({txt:"Add <b>Humic/Fulvic Acid</b> (Carbon Chelation)", group:"humic acid"});
-        }
-    }
-    // RECOVERY LOGIC (Bonus for optimizations)
-    if (fg.includes("nbpt")) score += 18;
-    if (fg.includes("polymer chain")) score += 22;
-    if (fg.includes("edta") || fg.includes("eddha")) score += 15;
-    if (fg.includes("humic acid")) score += 10;
+    moaClass = "Nutrient Logic Engine";
+    if (fg.includes("nbpt")) score += 15;
+    if (fg.includes("edta") || fg.includes("eddha")) score += 12;
+    if (fg.includes("humic acid")) score += 8;
   }
 
-  const finalScore = Math.min(98, Math.max(0, score));
-  const status = (finalScore < 50) ? "REJECT" : (finalScore >= 80 ? "PASS (ELITE)" : "OPTIMIZE");
-  const statusColor = status === "PASS (ELITE)" ? "#2ea44f" : (status === "REJECT" ? "#f85149" : "#f2cc60");
+  // Final Logic Scaling
+  const finalScore = Math.min(98, Math.max(5, score));
+  
+  const status = 
+    finalScore >= 90 ? "ELITE / FIELD READY" : 
+    finalScore >= 75 ? "PASS (INDUSTRIAL)" : 
+    finalScore >= 55 ? "WORKABLE / OPTIMIZE" : "FAIL / REJECT";
+
+  const statusColor = finalScore >= 90 ? "#2ea44f" : finalScore >= 75 ? "#3fb950" : finalScore >= 55 ? "#f2cc60" : "#f85149";
 
   // UPDATE UI
   document.getElementById('final-score').innerText = finalScore + "%";
@@ -360,28 +372,19 @@ function runEngine() {
   document.getElementById('metricsRow').style.cssText = 'display:grid!important;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px;';
   document.getElementById('moaRow').style.display = 'block';
   document.getElementById('moaBadge').innerText = moaClass;
-  document.getElementById('gate-status').innerHTML = gateLines.length > 0 ? gateLines.join('') : '<div style="color:#4a5568;">Awaiting input...</div>';
-  document.getElementById('designer-output').innerHTML = insights.map(i => `<div>${i}</div>`).join('') || '<div style="color:#4a5568;">No flags detected.</div>';
+  document.getElementById('gate-status').innerHTML = gateLines.join('') || '<div style="color:#4a5568;">Analysis Active...</div>';
+  document.getElementById('designer-output').innerHTML = insights.map(i => `<div>${i}</div>`).join('') || '<div style="color:#4a5568;">No flags.</div>';
   
-  // SUGGESTION OUTPUT
-  let advisorContent = `
-    <div style="color:#2ea44f;font-weight:900;">TRACK: ${track}</div>
-    <div class="mb-2">Logic Score: ${finalScore}%</div>
-  `;
-  
-  if (suggestions.length > 0 && finalScore < 98) {
-      advisorContent += `<div class="mt-2 text-yellow-500 font-bold uppercase text-[10px]">Optimization Pathway:</div>`;
-      advisorContent += suggestions.map(s => `
-        <div class="mt-1">• ${s.txt} 
-          <button class="suggestion-btn" onclick="applyGroup('${s.group}')">APPLY +</button>
-        </div>
-      `).join('');
-  } else if (finalScore >= 98) {
-      advisorContent += `<div class="mt-4 p-2 border border-[#2ea44f44] bg-[#2ea44f11] text-center text-[#2ea44f] font-bold rounded">ELITE MOLECULE DETECTED</div>`;
+  // SUGGESTION / RECOVERY PATHWAY
+  let advisorContent = `<div style="color:#2ea44f;font-weight:900;">TRACK: ${track}</div>`;
+  if (finalScore < 90) {
+      advisorContent += `<div class="mt-2 text-yellow-500 font-bold uppercase text-[10px]">Elite Recovery Pathway:</div>`;
+      if (uv < 12 && release !== "encapsulated") advisorContent += `<div class="mt-1">• Switch Release to <b>Encapsulated</b> to block UV loss.</div>`;
+      if (sol > 500 && !fg.includes("polymer chain")) advisorContent += `<div class="mt-1">• Add <b>Polymer Chain</b> to reach 90%+ Rainfastness. <button class="suggestion-btn" onclick="applyGroup('polymer chain')">APPLY +</button></div>`;
+      if (!fg.includes("fluorine")) advisorContent += `<div class="mt-1">• Add <b>Fluorine</b> to boost Bio-Stability. <button class="suggestion-btn" onclick="applyGroup('fluorine')">APPLY +</button></div>`;
   } else {
-      advisorContent += `<div class="mt-2" style="color:#4a5568;">No further suggestions.</div>`;
+      advisorContent += `<div class="mt-4 p-2 border border-[#2ea44f44] bg-[#2ea44f11] text-center text-[#2ea44f] font-bold rounded uppercase">Elite Molecule Logic Validated</div>`;
   }
-  
   document.getElementById('advisor-output').innerHTML = advisorContent;
 }
 
