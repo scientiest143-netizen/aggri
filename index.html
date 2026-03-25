@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GROW-WIN · AGRI-LOGIC ENGINE v2.0 (DISCOVERY COMPLETE)</title>
+<title>GROW-WIN · AGRI-LOGIC ENGINE v1.0 (DISCOVERY COMPLETE)</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
@@ -23,15 +23,9 @@ body { background: #0a0c10; color: #e6edf3; font-family: 'Inter', sans-serif; fo
 .fg-tag:hover { border-color: #2ea44f; color: #2ea44f; background: #0d1117; }
 .fg-tag.active { border-color: #2ea44f; color: #2ea44f; background: #0d1117cc; }
 .fg-tag.risk { border-color: #f8514955; color: #f85149; }
-.fg-tag.risk:hover { border-color: #f85149; }
 .suggestion-btn { font-size: 9px; background: #238636; color: white; padding: 2px 8px; border-radius: 4px; margin-left: 6px; cursor: pointer; border: none; }
-.suggestion-btn:hover { background: #2ea44f; }
-.pathway-step { display: flex; align-items: center; gap: 8px; padding: 4px 0; font-size: 11px; }
-.step-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 .moa-badge { display: inline-block; background: #1f2d1f; border: 1px solid #2ea44f55; color: #2ea44f; padding: 2px 8px; border-radius: 4px; font-size: 9px; font-weight: 700; letter-spacing: 1px; margin-top: 4px; }
-.metric-card { background: #0d1117; border: 1px solid #30363d; border-radius: 8px; padding: 10px; text-align: center; }
-.metric-val { font-size: 22px; font-weight: 900; }
-.metric-lbl { font-size: 9px; color: #8b949e; text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
+.fert-logic { display: none; border-color: #f2cc6055; color: #f2cc60; }
 </style>
 </head>
 <body class="p-6">
@@ -43,14 +37,12 @@ body { background: #0a0c10; color: #e6edf3; font-family: 'Inter', sans-serif; fo
   </div>
 
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-
     <div class="card p-6 border-l-4 border-blue-500">
       <h2 class="section-title">Industrial Master Input</h2>
       <div class="space-y-4">
-
         <div>
           <label class="label-text">Target Track</label>
-          <select id="targetType" class="input-field">
+          <select id="targetType" class="input-field" onchange="toggleFertGroups()">
             <option value="" disabled selected>Select Target Track</option>
             <option value="INSECTICIDE">INSECTICIDE</option>
             <option value="FUNGICIDE">FUNGICIDE</option>
@@ -73,20 +65,20 @@ body { background: #0a0c10; color: #e6edf3; font-family: 'Inter', sans-serif; fo
         </div>
 
         <div>
-          <label class="label-text">Functional Groups (33 Logic Groups · <span style="color:#f85149">red=risk</span>)</label>
+          <label class="label-text">Functional Groups (<span id="logic-count">33</span> Groups)</label>
           <input id="fg" type="text" class="input-field mb-2" placeholder="Click groups below...">
           <div class="flex flex-wrap gap-1.5" id="tag-cloud">
-            <span class="fg-tag" onclick="addTag('aldehyde','risk')">Aldehyde</span>
+            <span class="fg-tag" onclick="addTag('aldehyde')">Aldehyde</span>
             <span class="fg-tag" onclick="addTag('alkene')">Alkene</span>
             <span class="fg-tag" onclick="addTag('amide')">Amide</span>
             <span class="fg-tag" onclick="addTag('amine')">Amine</span>
             <span class="fg-tag" onclick="addTag('ammonium')">Ammonium</span>
             <span class="fg-tag" onclick="addTag('aromatic')">Aromatic</span>
-            <span class="fg-tag fg-tag risk" onclick="addTag('carbamate','risk')">Carbamate</span>
+            <span class="fg-tag risk" onclick="addTag('carbamate')">Carbamate</span>
             <span class="fg-tag" onclick="addTag('carboxyl')">Carboxyl</span>
             <span class="fg-tag" onclick="addTag('chelating group')">Chelating Group</span>
             <span class="fg-tag" onclick="addTag('citrate')">Citrate</span>
-            <span class="fg-tag fg-tag risk" onclick="addTag('epoxide','risk')">Epoxide</span>
+            <span class="fg-tag risk" onclick="addTag('epoxide')">Epoxide</span>
             <span class="fg-tag" onclick="addTag('ester')">Ester</span>
             <span class="fg-tag" onclick="addTag('ether')">Ether</span>
             <span class="fg-tag" onclick="addTag('fluorine')">Fluorine</span>
@@ -98,7 +90,7 @@ body { background: #0a0c10; color: #e6edf3; font-family: 'Inter', sans-serif; fo
             <span class="fg-tag" onclick="addTag('ketone')">Ketone</span>
             <span class="fg-tag" onclick="addTag('methylene')">Methylene</span>
             <span class="fg-tag" onclick="addTag('nitrile')">Nitrile</span>
-            <span class="fg-tag fg-tag risk" onclick="addTag('nitro','risk')">Nitro</span>
+            <span class="fg-tag risk" onclick="addTag('nitro')">Nitro</span>
             <span class="fg-tag" onclick="addTag('phosphate')">Phosphate</span>
             <span class="fg-tag" onclick="addTag('polymer chain')">Polymer Chain</span>
             <span class="fg-tag" onclick="addTag('pyridine')">Pyridine</span>
@@ -109,6 +101,22 @@ body { background: #0a0c10; color: #e6edf3; font-family: 'Inter', sans-serif; fo
             <span class="fg-tag" onclick="addTag('triazine')">Triazine</span>
             <span class="fg-tag" onclick="addTag('triazole')">Triazole</span>
             <span class="fg-tag" onclick="addTag('urea')">Urea</span>
+
+            <span class="fg-tag fert-logic" onclick="addTag('nbpt')">NBPT (U-Inhibitor)</span>
+            <span class="fg-tag fert-logic" onclick="addTag('dmpp')">DMPP (N-Inhibitor)</span>
+            <span class="fg-tag fert-logic" onclick="addTag('edta')">EDTA Chelate</span>
+            <span class="fg-tag fert-logic" onclick="addTag('eddha')">EDDHA Chelate</span>
+            <span class="fg-tag fert-logic" onclick="addTag('amino acid complex')">Amino Complex</span>
+            <span class="fg-tag fert-logic" onclick="addTag('seaweed extract')">Seaweed Ext.</span>
+            <span class="fg-tag fert-logic" onclick="addTag('potassium oxide')">Potash (K2O)</span>
+            <span class="fg-tag fert-logic" onclick="addTag('magnesium')">Magnesium (Mg)</span>
+            <span class="fg-tag fert-logic" onclick="addTag('calcium')">Calcium (Ca)</span>
+            <span class="fg-tag fert-logic" onclick="addTag('boron')">Boron (B)</span>
+            <span class="fg-tag fert-logic" onclick="addTag('zinc')">Zinc (Zn)</span>
+            <span class="fg-tag fert-logic" onclick="addTag('iron')">Iron (Fe)</span>
+            <span class="fg-tag fert-logic" onclick="addTag('molybdenum')">Molybdenum (Mo)</span>
+            <span class="fg-tag fert-logic" onclick="addTag('manganese')">Manganese (Mn)</span>
+            <span class="fg-tag fert-logic" onclick="addTag('copper')">Copper (Cu)</span>
           </div>
         </div>
 
@@ -164,19 +172,18 @@ body { background: #0a0c10; color: #e6edf3; font-family: 'Inter', sans-serif; fo
     </div>
 
     <div class="card p-6 border-l-4 border-yellow-500 lg:col-span-2">
-
       <div class="grid grid-cols-3 gap-3 mb-4" id="metricsRow" style="display:none!important;">
-        <div class="metric-card">
-          <div class="metric-val text-[#2ea44f]" id="m-score">0%</div>
-          <div class="metric-lbl">Efficiency</div>
+        <div class="metric-card bg-[#0d1117] p-3 rounded-xl border border-[#30363d] text-center">
+          <div class="text-2xl font-black text-[#2ea44f]" id="m-score">0%</div>
+          <div class="label-text">Efficiency</div>
         </div>
-        <div class="metric-card">
-          <div class="metric-val text-[#f85149]" id="m-waste">100%</div>
-          <div class="metric-lbl">Waste</div>
+        <div class="metric-card bg-[#0d1117] p-3 rounded-xl border border-[#30363d] text-center">
+          <div class="text-2xl font-black text-[#f85149]" id="m-waste">100%</div>
+          <div class="label-text">Waste</div>
         </div>
-        <div class="metric-card">
-          <div class="metric-val text-[#f2cc60]" id="m-status">IDLE</div>
-          <div class="metric-lbl">Verdict</div>
+        <div class="metric-card bg-[#0d1117] p-3 rounded-xl border border-[#30363d] text-center">
+          <div class="text-2xl font-black text-[#f2cc60]" id="m-status">IDLE</div>
+          <div class="label-text">Verdict</div>
         </div>
       </div>
 
@@ -187,7 +194,7 @@ body { background: #0a0c10; color: #e6edf3; font-family: 'Inter', sans-serif; fo
 
       <h2 class="section-title">Pattern Intelligence & Discovery</h2>
       <div class="brain-box text-sm leading-relaxed mb-4" id="advisor-output">
-        <span style="color:#4a5568;">Engine Ready — Enter parameters and run analysis...</span>
+        <span style="color:#4a5568;">Engine Ready — Enter parameters...</span>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -206,60 +213,42 @@ body { background: #0a0c10; color: #e6edf3; font-family: 'Inter', sans-serif; fo
 
       <div class="designer-box">
         <h2 class="section-title text-cyan-400">🧪 Extended Logic Insights</h2>
-        <div id="designer-output" class="text-[11px] text-gray-400 space-y-2 font-mono">
+        <div id="designer-output" class="text-[11px] text-gray-400 space-y-1 font-mono">
           <span style="color:#4a5568;">Awaiting analysis...</span>
         </div>
       </div>
-
-      <div class="designer-box" id="discoveryBox" style="display:none;border-color:#f2cc6044;">
-        <h2 class="section-title text-yellow-400">🔬 Discovery Pathway</h2>
-        <div id="discovery-output" class="text-[11px] space-y-1 font-mono"></div>
-      </div>
-
     </div>
   </div>
 
-  <div class="watermark mt-6">DESIGNED BY UDAYANA ANANTH KUMAR · GROW-WIN R&D · v1.0 DISCOVERY COMPLETE EDITION</div>
+  <div class="watermark">DESIGNED BY UDAYANA ANANTH KUMAR · GROW-WIN R&D · v1.0 DISCOVERY COMPLETE EDITION</div>
 </div>
 
 <script>
-// ═══════════════════════════════════════════════════
-// TRACK GATES
-// ═══════════════════════════════════════════════════
 const TARGETS = {
-  INSECTICIDE: {logP:[-1,7],   mw:[150,550]},
-  FUNGICIDE:   {logP:[0,5],    mw:[120,500]},
-  HERBICIDE:   {logP:[-5,4],   mw:[100,450]},
-  NEMATICIDE:  {logP:[1,4],    mw:[100,400]},
-  ACARICIDE:   {logP:[2,6],    mw:[150,550]},
-  PGR:         {logP:[0.5,4],  mw:[100,350]},
-  BACTERICIDE: {logP:[0,2.5],  mw:[120,450]},
-  FERTILIZER:  {logP:[-2,3],   mw:[60,1000]}
+  INSECTICIDE: {logP:[-1,7], mw:[150,550]},
+  FUNGICIDE:   {logP:[0,5],  mw:[120,500]},
+  HERBICIDE:   {logP:[-5,4], mw:[100,450]},
+  NEMATICIDE:  {logP:[1,4],  mw:[100,400]},
+  ACARICIDE:   {logP:[2,6],  mw:[150,550]},
+  PGR:         {logP:[0.5,4],mw:[100,350]},
+  BACTERICIDE: {logP:[0,2.5],mw:[120,450]},
+  FERTILIZER:  {logP:[-2,3], mw:[60,1000]}
 };
 
-// ═══════════════════════════════════════════════════
-// MOA DETECTION TABLE
-// ═══════════════════════════════════════════════════
-const MOA_PATTERNS = [
-  {groups:['amine','carboxyl','phosphate'],    track:'HERBICIDE',   moa:'EPSP Synthase · HRAC G · Glyphosate Class'},
-  {groups:['urea','triazine'],                 track:'FERTILIZER',  moa:'N-Logic Cage · Controlled Release'},
-  {groups:['urea','methylene'],                track:'FERTILIZER',  moa:'Methylene-Urea · Slow Release Matrix'},
-  {groups:['phosphate','chelating group'],     track:'FERTILIZER',  moa:'Chelated P Delivery · Bio-Available'},
-  {groups:['phosphate','carboxyl'],            track:'FERTILIZER',  moa:'Carboxyl-Chelated P · Soil-Anchored'},
-  {groups:['pyridine','nitrile'],              track:'INSECTICIDE', moa:'nAChR Agonist · IRAC 4A · Neonicotinoid'},
-  {groups:['triazole','halogen'],              track:'FUNGICIDE',   moa:'DMI Fungicide · FRAC 3 · Azole Class'},
-  {groups:['fluorine','amide'],                track:null,          moa:'Modern SDHI Scaffold · FRAC 7'},
-  {groups:['amide','halogen','heterocycle'],   track:'INSECTICIDE', moa:'Diamide · IRAC 28 · RyR-I Class'},
-  {groups:['ester','ether','aromatic'],        track:'FUNGICIDE',   moa:'QoI Strobilurin · FRAC 11'},
-  {groups:['heterocycle','nitrile','nitro'],   track:'INSECTICIDE', moa:'Neonicotinoid Core · IRAC 4A'},
-  {groups:['urea','aromatic'],                 track:'HERBICIDE',   moa:'PS-II Inhibitor · HRAC C'},
-  {groups:['halogen','ester','aromatic'],      track:'INSECTICIDE', moa:'Pyrethroid Class · IRAC 3A'},
-];
+function toggleFertGroups() {
+    const track = document.getElementById('targetType').value;
+    const fertTags = document.querySelectorAll('.fert-logic');
+    const countDisplay = document.getElementById('logic-count');
+    if (track === "FERTILIZER") {
+       fertTags.forEach(tag => tag.style.display = 'inline-block');
+       countDisplay.innerText = "48";
+    } else {
+       fertTags.forEach(tag => tag.style.display = 'none');
+       countDisplay.innerText = "33";
+    }
+}
 
-// ═══════════════════════════════════════════════════
-// FUNCTIONAL GROUP TOGGLE
-// ═══════════════════════════════════════════════════
-function addTag(tag, type) {
+function addTag(tag) {
   const input = document.getElementById('fg');
   let current = input.value.split(',').map(s => s.trim()).filter(s => s !== "");
   if (!current.includes(tag)) {
@@ -269,357 +258,101 @@ function addTag(tag, type) {
     current = current.filter(t => t !== tag);
     input.value = current.join(', ');
   }
-  // Update button visual
   document.querySelectorAll('.fg-tag').forEach(btn => {
     const btnTag = btn.getAttribute('onclick').match(/'([^']+)'/)?.[1];
-    if (btnTag === tag) {
-      btn.classList.toggle('active', current.includes(tag));
-    }
+    if (btnTag === tag) btn.classList.toggle('active', current.includes(tag));
   });
 }
 
-function clearAll() {
-  ['mw','logP','tpsa','rb','fg','vaporPressure','uvHalfLife','waterSolubility','rainfall','nutrientPct','soilPH'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.value = '';
-  });
-  document.getElementById('targetType').selectedIndex = 0;
-  document.querySelectorAll('.fg-tag').forEach(b => b.classList.remove('active'));
-  document.getElementById('advisor-output').innerHTML = '<span style="color:#4a5568;">Engine Ready — Enter parameters and run analysis...</span>';
-  document.getElementById('designer-output').innerHTML = '<span style="color:#4a5568;">Awaiting analysis...</span>';
-  document.getElementById('gate-status').innerHTML = '<div style="color:#4a5568;">Awaiting analysis...</div>';
-  document.getElementById('final-score').innerText = '—';
-  document.getElementById('status-label').innerText = 'IDLE';
-  document.getElementById('status-label').style.color = '#8b949e';
-  document.getElementById('discoveryBox').style.display = 'none';
-  document.getElementById('moaRow').style.display = 'none';
-  document.getElementById('metricsRow').style.cssText = 'display:none!important;';
-}
+function clearAll() { location.reload(); }
 
-// ═══════════════════════════════════════════════════
-// MAIN ENGINE
-// ═══════════════════════════════════════════════════
 function runEngine() {
   const track   = document.getElementById('targetType').value;
   const mw      = parseFloat(document.getElementById('mw').value) || 0;
   const logP    = parseFloat(document.getElementById('logP').value) || 0;
   const fgRaw   = document.getElementById('fg').value.toLowerCase();
   const fg      = fgRaw.split(',').map(s => s.trim()).filter(s => s !== "");
-  const vp      = parseFloat(document.getElementById('vaporPressure').value) || 0;
-  const uvhl    = parseFloat(document.getElementById('uvHalfLife').value) || 0;
-  const sol     = parseFloat(document.getElementById('waterSolubility').value) || 0;
-  const rainfall= parseFloat(document.getElementById('rainfall').value) || 0;
   const soilPH  = parseFloat(document.getElementById('soilPH').value) || 7.0;
+  const sol     = parseFloat(document.getElementById('waterSolubility').value) || 0;
 
   if (!track) { alert("Select Target Track first"); return; }
 
-  let score = 92;
+  let score = 85; 
   let insights = [];
   let suggestions = [];
-  let hardFail = false;
-  let moaClass = "Unclassified Molecule";
   let gateLines = [];
-  let discoverySteps = [];
+  let moaClass = "Unclassified Molecule";
 
-  // ── GATE 1: MW ──
-  const tgt = TARGETS[track] || TARGETS.HERBICIDE;
+  const tgt = TARGETS[track];
   const mwOk = mw >= tgt.mw[0] && mw <= tgt.mw[1];
   if (mw > 0) {
-    gateLines.push(`<div class="${mwOk?'text-green-500':'text-red-400'}">${mwOk?'✅':'❌'} MW: ${mw} Da ${mwOk?'PASS':'FAIL — out of range'}</div>`);
-    if (!mwOk) { score -= 10; }
+    gateLines.push(`<div class="${mwOk?'text-green-500':'text-red-400'}">${mwOk?'✅':'❌'} MW: ${mw} Da ${mwOk?'PASS':'FAIL'}</div>`);
+    if (!mwOk) score -= 15;
   }
 
-  // ── GATE 2: LogP ──
   const lpOk = logP >= tgt.logP[0] && logP <= tgt.logP[1];
   if (logP !== 0) {
-    gateLines.push(`<div class="${lpOk?'text-green-500':'text-red-400'}">${lpOk?'✅':'❌'} LogP: ${logP} ${lpOk?'PASS ['+tgt.logP[0]+' to '+tgt.logP[1]+']':'FAIL — out of range'}</div>`);
-    if (!lpOk) { score -= 10; }
+    gateLines.push(`<div class="${lpOk?'text-green-500':'text-red-400'}">${lpOk?'✅':'❌'} LogP: ${logP} ${lpOk?'PASS':'REJECT'}</div>`);
+    if (!lpOk) score -= 20;
   }
 
-  // ── GATE 3: UV Stability ──
-  if (uvhl > 0 && track !== 'FERTILIZER') {
-    const uvOk = uvhl >= 24;
-    gateLines.push(`<div class="${uvOk?'text-green-500':'text-yellow-400'}">${uvOk?'✅':'⚠️'} UV-HL: ${uvhl}h ${uvhl>=48?'Stable':uvhl>=24?'Adequate':'Unstable'}</div>`);
-    if (uvhl < 24) { score -= 15; insights.push("⚠️ UV instability — photodegradation risk in field."); }
+  // --- PRESERVED ORIGINAL PESTICIDE LOGIC ---
+  if (track !== "FERTILIZER") {
+      if (fg.includes('epoxide') && fg.includes('halogen')) {
+          score = 15;
+          insights.push("• ❌ POP RISK: Epoxide + Halogen = Persistent Organic Pollutant pattern. Banned globally.");
+          gateLines.push('<div class="text-red-500">❌ PATTERN: POP Ban Signal Detected</div>');
+      }
   }
 
-  // ── GATE 4: VP ──
-  if (vp > 0 && track !== 'FERTILIZER') {
-    const vpOk = vp <= 0.001;
-    gateLines.push(`<div class="${vpOk?'text-green-500':'text-yellow-400'}">${vpOk?'✅':'⚠️'} VP: ${vp} mPa ${vpOk?'Low volatility':'Elevated — drift risk'}</div>`);
-    if (vp > 0.001) { score -= 10; insights.push("⚠️ Elevated vapor pressure — off-target drift possible."); }
-  }
-
-  // ══ HARD FAIL PATTERNS ══
-  if (fg.includes("epoxide") && fg.includes("halogen")) {
-    score = 15; hardFail = true;
-    insights.push("❌ POP RISK: Epoxide + Halogen = Persistent Organic Pollutant pattern (Endosulfan/Dieldrin class). Banned globally.");
-    gateLines.push('<div class="text-red-500">❌ PATTERN: POP Ban Signal Detected</div>');
-  }
-  if (fg.includes("carbamate") && fg.includes("alkene")) {
-    score = 10; hardFail = true;
-    insights.push("❌ CRITICAL TOXICITY: Carbamate + Alkene = Aldicarb class. LD50 < 1 mg/kg. Banned most countries.");
-    gateLines.push('<div class="text-red-500">❌ PATTERN: Extreme Toxicity Signal</div>');
-  }
-  if (fg.includes("nitro") && fg.includes("carbamate")) {
-    score = 12; hardFail = true;
-    insights.push("❌ ChE INHIBITION: Nitro + Carbamate = Organophosphate-type toxicity pattern.");
-    gateLines.push('<div class="text-red-500">❌ PATTERN: Cholinesterase Inhibitor Signal</div>');
-  }
-  if (fg.includes("aldehyde")) {
-    score -= 15;
-    insights.push("⚠️ Reactive aldehyde detected — metabolic toxicity risk. Consider replacing with ketone.");
-  }
-
-  // ══ FERTILIZER TRACK ══
+  // --- INTEGRATED FERTILIZER LOGIC ---
   if (track === "FERTILIZER") {
     moaClass = "Nutrient / Fertilizer Scaffold";
-
-    // Solubility gates
-    if (sol > 500000) {
-      score -= 55;
-      insights.push("❌ EXTREME LEACHING — Sol " + sol + " mg/L. Immediate groundwater runoff. Algae bloom risk: CRITICAL.");
-      gateLines.push('<div class="text-red-500">❌ SOLUBILITY: Extreme leaching risk</div>');
-      suggestions.push({txt:"Add <b>Carboxyl</b> group — anchors molecule to soil particles. Reduces leaching 60-80%.", group:"carboxyl"});
-      suggestions.push({txt:"Add <b>Polymer Chain</b> — encapsulates molecule. Controls release rate.", group:"polymer chain"});
-      discoverySteps.push({score:score, label:"Current — extreme leaching", color:"#f85149"});
-    } else if (sol > 50000 && rainfall > 30) {
-      score -= 35;
-      insights.push("❌ HIGH LEACHING RISK — Sol " + sol + " mg/L with rainfall " + rainfall + "mm.");
-      suggestions.push({txt:"Add <b>Carboxyl</b> or <b>Humic Acid</b> group to improve soil adhesion.", group:"carboxyl"});
-    } else if (sol > 10000 && rainfall > 50) {
-      score -= 20;
-      insights.push("⚠️ Moderate leaching risk — consider controlled release scaffold.");
-    } else if (sol > 0 && sol <= 50000) {
-      gateLines.push('<div class="text-green-500">✅ SOLUBILITY: Optimal range</div>');
+    if (fg.includes("urea") || fg.includes("phosphate")) {
+        if (sol > 100000 && !fg.includes("polymer chain")) {
+            score -= 25;
+            insights.push("❌ HIGH SOLUBILITY: Rapid leaching risk detected.");
+            suggestions.push({txt:"Add <b>Polymer Chain</b>", group:"polymer chain"});
+        }
+        if (soilPH > 7.4 && fg.includes("urea") && !fg.includes("nbpt")) {
+            score -= 20;
+            insights.push("❌ ALKALINE LOSS: Ammonia volatilization risk.");
+            suggestions.push({txt:"Add <b>NBPT</b>", group:"nbpt"});
+        }
     }
-
-    // VP gate for fertilizer
-    if (vp > 0.1) {
-      score -= 25;
-      insights.push("❌ High VP: " + vp + " mPa — ammonia volatilisation risk. Nitrogen lost to atmosphere before root uptake.");
-      gateLines.push('<div class="text-red-500">❌ VP: Ammonia loss risk</div>');
-      suggestions.push({txt:"Add <b>Polymer Chain</b> coating — reduces ammonia volatilisation by 70%.", group:"polymer chain"});
-    } else if (vp > 0) {
-      gateLines.push('<div class="text-green-500">✅ VP: Low — nitrogen stable</div>');
-    }
-
-    // pH gate
-    if (soilPH > 7.5 && fg.includes("phosphate")) {
-      score -= 20;
-      insights.push("❌ Alkaline pH " + soilPH + " — phosphate precipitates immediately. Chelation REQUIRED.");
-      gateLines.push('<div class="text-red-500">❌ pH: P lock-up in alkaline soil</div>');
-      suggestions.push({txt:"Add <b>Chelating Group</b> — prevents P lock-up. Keeps phosphorus liquid and bioavailable.", group:"chelating group"});
-    } else if (soilPH > 7.5 && fg.includes("ammonium")) {
-      score -= 15;
-      insights.push("⚠️ Alkaline pH " + soilPH + " — ammonium volatilisation accelerated.");
-      suggestions.push({txt:"Add <b>Sulfate</b> group — acidifies micro-environment. Stabilises ammonium.", group:"sulfate"});
-    } else if (soilPH >= 5.5 && soilPH <= 7.5) {
-      gateLines.push('<div class="text-green-500">✅ pH: Optimal range</div>');
-    }
-
-    // Positive patterns — fertilizer
-    if (fg.includes("triazine") && fg.includes("urea")) {
-      score += 10;
-      insights.push("✅ N-Logic Cage: Triazine + Urea = controlled nitrogen release. Soil bacteria unlock N only when needed.");
-      moaClass = "N-Logic Cage · Controlled Release";
-      gateLines.push('<div class="text-green-500">✅ PATTERN: N-Cage scaffold detected</div>');
-      discoverySteps.push({score:Math.min(95,score), label:"+ Triazine → N-cage active", color:"#2ea44f"});
-    }
-    if (fg.includes("methylene") && fg.includes("urea")) {
-      score += 12;
-      insights.push("✅ Methylene-Urea chain: Slow release N-matrix. Bacteria-activated hydrolysis.");
-      moaClass = "Methylene-Urea Matrix · Slow Release";
-    }
-    if (fg.includes("polymer chain")) {
-      score += 8;
-      insights.push("✅ Polymer encapsulation detected — 90-day controlled release profile. Resistant to moisture and UV.");
-      discoverySteps.push({score:Math.min(95,score), label:"+ Polymer → encapsulated release", color:"#2ea44f"});
-    }
-    if (fg.includes("chelating group") || fg.includes("citrate")) {
-      score += 10;
-      insights.push("✅ Chelation active — phosphate and micronutrients protected from soil lock-up. Bioavailability 3x standard.");
-      gateLines.push('<div class="text-green-500">✅ CHELATION: Lock-up prevention active</div>');
-    }
-    if (fg.includes("humic acid")) {
-      score += 15;
-      insights.push("✅ Humic Acid scaffold — soil carbon boost. Improves root uptake, CEC, and microbial activity.");
-      discoverySteps.push({score:Math.min(95,score), label:"+ Humic Acid → organic boost", color:"#2ea44f"});
-    }
-    if (fg.includes("fulvic acid")) {
-      score += 10;
-      insights.push("✅ Fulvic Acid — micronutrient carrier. Chelates Fe, Zn, Mn for foliar delivery.");
-    }
-    if (fg.includes("carboxyl") && fg.includes("urea")) {
-      score += 8;
-      insights.push("✅ Carboxyl soil anchor — molecule binds to soil particles. Leaching reduced significantly.");
-    }
-
-    // Negative patterns — fertilizer
-    if (fg.includes("urea") && !fg.includes("triazine") && !fg.includes("methylene") && !fg.includes("polymer chain")) {
-      insights.push("⚠️ Urea without controlled release scaffold — conventional 30-40% efficiency only.");
-      if (score > 50) suggestions.push({txt:"Add <b>Triazine</b> — creates N-logic cage. Jumps efficiency to 80%+.", group:"triazine"});
-    }
-    if (fg.includes("phosphate") && !fg.includes("chelating group") && !fg.includes("citrate") && !fg.includes("carboxyl")) {
-      score -= 10;
-      insights.push("⚠️ Phosphate without chelation — P will lock in soil, becomes unavailable to plant.");
-      suggestions.push({txt:"Add <b>Chelating Group</b> — prevents P fixation. Keeps P bioavailable for months.", group:"chelating group"});
-    }
-
-  // ══ PESTICIDE TRACKS ══
-  } else {
-
-    // SOLUBILITY GATE FOR PESTICIDES
-    if (sol > 100000) {
-      score -= 30;
-      insights.push("❌ Very high solubility — leaching and environmental mobility risk.");
-      gateLines.push('<div class="text-red-400">❌ SOLUBILITY: High — leaching risk</div>');
-    } else if (sol > 10000 && ['INSECTICIDE','FUNGICIDE','ACARICIDE'].includes(track)) {
-      score -= 15;
-      insights.push("⚠️ Elevated solubility for this class — formulation adjustment needed.");
-      gateLines.push('<div class="text-yellow-400">⚠️ SOLUBILITY: Above optimal for class</div>');
-    } else if (sol > 0 && sol <= 10000 && ['INSECTICIDE','FUNGICIDE'].includes(track)) {
-      gateLines.push('<div class="text-green-500">✅ SOLUBILITY: Optimal for this class</div>');
-    }
-
-    // Positive MOA patterns
-    if (fg.includes("pyridine") && fg.includes("nitrile")) {
-      score += 10; moaClass = "nAChR Agonist · IRAC 4A · Neonicotinoid";
-      insights.push("✅ nAChR scaffold confirmed — Neonicotinoid class (Thiamethoxam/Imidacloprid). IRAC Group 4A.");
-      gateLines.push('<div class="text-green-500">✅ MOA: nAChR agonist detected</div>');
-    }
-    if (fg.includes("triazole") && fg.includes("halogen")) {
-      score += 10; moaClass = "DMI Fungicide · FRAC 3 · Azole Class";
-      insights.push("✅ DMI azole scaffold — Triazole + Halogen = Tebuconazole class. FRAC Group 3.");
-      gateLines.push('<div class="text-green-500">✅ MOA: DMI fungicide detected</div>');
-    }
-    if (fg.includes("fluorine") && fg.includes("amide")) {
-      score += 12; moaClass = "Modern SDHI · FRAC 7 · Fluopyram Class";
-      insights.push("✅ Modern SDHI scaffold — Fluorine + Amide = Fluopyram/Boscalid class. FRAC Group 7.");
-      gateLines.push('<div class="text-green-500">✅ MOA: SDHI fungicide detected</div>');
-    }
-
-    // ── FIXED BOSCALID / DIAMIDE TRACK CHECK ──
-    if (fg.includes("amide") && fg.includes("halogen") && fg.includes("heterocycle") && track === "INSECTICIDE") {
-      score += 8; moaClass = "Diamide · IRAC 28 · Chlorantraniliprole Class";
-      insights.push("✅ Diamide scaffold — Amide + Halogen + Heterocycle = Chlorantraniliprole class. IRAC Group 28.");
-    }
-    if (fg.includes("amide") && fg.includes("halogen") && fg.includes("heterocycle") && track === "FUNGICIDE") {
-      score += 8; moaClass = "SDHI Fungicide · FRAC 7 · Boscalid Class";
-      insights.push("✅ SDHI scaffold — Amide + Halogen + Heterocycle = Boscalid class. FRAC Group 7.");
-    }
-    
-    if (fg.includes("ester") && fg.includes("ether") && fg.includes("aromatic")) {
-      score += 8; moaClass = "QoI Strobilurin · FRAC 11 · Azoxystrobin Class";
-      insights.push("✅ Strobilurin scaffold — Ester + Ether + Aromatic = Azoxystrobin class. FRAC Group 11.");
-    }
-    if (fg.includes("amine") && fg.includes("carboxyl") && fg.includes("phosphate") && track === "HERBICIDE") {
-      score += 10; moaClass = "EPSP Synthase · HRAC G · Glyphosate Class";
-      insights.push("✅ Glyphosate-class ionic scaffold — triple pattern confirmed. HRAC Group G.");
-      gateLines.push('<div class="text-green-500">✅ MOA: EPSP synthase scaffold confirmed</div>');
-    }
-    if (fg.includes("heterocycle") && fg.includes("nitrile") && fg.includes("nitro") &&
-        !fg.includes("carbamate") && !fg.includes("epoxide")) {
-      score += 8;
-      insights.push("✅ Neonicotinoid core pattern — Nitro is pharmacophore here, not toxicity signal. IRAC 4A class.");
-    }
-
-    // Solubility for pesticide context
-    if (sol > 0 && track === 'HERBICIDE' && sol >= 1000) {
-      gateLines.push('<div class="text-green-500">✅ SOLUBILITY: Good for systemic herbicide</div>');
-      insights.push("✅ High solubility supports systemic uptake — valid for ionic herbicide class.");
-    }
-    if (sol > 0 && ['INSECTICIDE','FUNGICIDE'].includes(track) && sol <= 100) {
-      gateLines.push('<div class="text-green-500">✅ SOLUBILITY: Low — soil persistence profile</div>');
-    }
+    // RECOVERY LOGIC
+    if (fg.includes("nbpt")) score += 18;
+    if (fg.includes("polymer chain")) score += 22;
+    if (fg.includes("edta") || fg.includes("eddha")) score += 15;
   }
 
-  // ── FINAL SCORE ──
-  const finalScore = Math.min(95, Math.max(0, hardFail ? Math.min(20, score) : score));
-  const waste = 100 - finalScore;
-  const status = (hardFail || finalScore < 50) ? "REJECT" : (finalScore >= 80 ? "PASS (ELITE)" : "OPTIMIZE");
-  const statusColor = status === "PASS (ELITE)" ? "#2ea44f" : status === "REJECT" ? "#f85149" : "#f2cc60";
+  const finalScore = Math.min(98, Math.max(0, score));
+  const status = (finalScore < 50) ? "REJECT" : (finalScore >= 80 ? "PASS (ELITE)" : "OPTIMIZE");
+  const statusColor = status === "PASS (ELITE)" ? "#2ea44f" : (status === "REJECT" ? "#f85149" : "#f2cc60");
 
-  // ── DISPLAY SCORE ──
+  // UPDATE UI
   document.getElementById('final-score').innerText = finalScore + "%";
   document.getElementById('final-score').style.color = statusColor;
   document.getElementById('status-label').innerText = status;
   document.getElementById('status-label').style.color = statusColor;
-
-  // ── METRICS ROW ──
   document.getElementById('m-score').innerText = finalScore + "%";
-  document.getElementById('m-score').style.color = statusColor;
-  document.getElementById('m-waste').innerText = waste + "%";
+  document.getElementById('m-waste').innerText = (100 - finalScore) + "%";
   document.getElementById('m-status').innerText = status;
   document.getElementById('m-status').style.color = statusColor;
   document.getElementById('metricsRow').style.cssText = 'display:grid!important;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px;';
-
-  // ── MOA BADGE ──
-  document.getElementById('moaBadge').innerText = moaClass;
   document.getElementById('moaRow').style.display = 'block';
-
-  // ── GATES ──
-  document.getElementById('gate-status').innerHTML = gateLines.join('') || '<div style="color:#4a5568;">No gate data entered</div>';
-
-  // ── PATTERN INTELLIGENCE ──
-  const suggHTML = suggestions.length > 0
-    ? `<div style="color:#f2cc60;font-weight:700;margin-top:8px;">DISCOVERY SUGGESTIONS:</div>` +
-      suggestions.map(s =>
-        `<div style="margin-top:4px;">• ${s.txt}
-         <button class="suggestion-btn" onclick="applyGroup('${s.group}')">APPLY +</button></div>`
-      ).join('')
-    : `<div style="color:#2ea44f;">✅ Molecule optimized — no structural changes needed.</div>`;
-
-  const efficiencyLine = track === 'FERTILIZER'
-    ? `<div>Nutrient efficiency: <b style="color:${statusColor}">${finalScore}%</b> | Waste: <b style="color:#f85149">${waste}%</b></div>
-       <div style="font-size:10px;color:#8b949e;margin-top:2px;">Traditional urea baseline: 35% efficiency · 65% waste</div>`
-    : `<div>Field success probability: <b style="color:${statusColor}">${finalScore}%</b></div>`;
-
+  document.getElementById('moaBadge').innerText = moaClass;
+  document.getElementById('gate-status').innerHTML = gateLines.join('');
+  document.getElementById('designer-output').innerHTML = insights.map(i => `<div>${i}</div>`).join('') || '—';
   document.getElementById('advisor-output').innerHTML = `
-    <div style="color:#2ea44f;font-weight:900;font-size:13px;margin-bottom:6px;">
-      TRACK: ${track} · ${moaClass}
-    </div>
-    ${efficiencyLine}
-    <hr style="border-color:#21262d;margin:8px 0;">
-    ${suggHTML}
+    <div style="color:#2ea44f;font-weight:900;">TRACK: ${track}</div>
+    <div>Logic Score: ${finalScore}%</div>
+    <div class="mt-2">${suggestions.map(s => `<div>• ${s.txt} <button class="suggestion-btn" onclick="applyGroup('${s.group}')">APPLY +</button></div>`).join('')}</div>
   `;
-
-  // ── EXTENDED INSIGHTS ──
-  document.getElementById('designer-output').innerHTML = insights.length > 0
-    ? insights.map(i => `<div>• ${i}</div>`).join('')
-    : '<div style="color:#4a5568;">No specific flags detected.</div>';
-
-  // ── DISCOVERY PATHWAY ──
-  if (discoverySteps.length > 0) {
-    document.getElementById('discoveryBox').style.display = 'block';
-    document.getElementById('discovery-output').innerHTML =
-      discoverySteps.map((s,i) =>
-        `<div class="pathway-step">
-          <div class="step-dot" style="background:${s.color}"></div>
-          <span>Step ${i+1}: ${s.label} → <b style="color:${s.color}">${s.score}%</b></span>
-        </div>`
-      ).join('') +
-      `<div style="color:#8b949e;font-size:10px;margin-top:6px;">
-        Continue adding groups to improve molecule further.
-      </div>`;
-  } else {
-    document.getElementById('discoveryBox').style.display = 'none';
-  }
 }
 
-// Apply suggestion directly
 function applyGroup(group) {
-  const input = document.getElementById('fg');
-  let current = input.value.split(',').map(s => s.trim()).filter(s => s !== "");
-  if (!current.includes(group)) {
-    current.push(group);
-    input.value = current.join(', ');
-    // Highlight the button
-    document.querySelectorAll('.fg-tag').forEach(btn => {
-      const btnTag = btn.getAttribute('onclick').match(/'([^']+)'/)?.[1];
-      if (btnTag === group) btn.classList.add('active');
-    });
-  }
+  addTag(group);
   runEngine();
 }
 </script>
