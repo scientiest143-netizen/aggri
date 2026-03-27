@@ -3,496 +3,443 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GROW-WIN · AGRI-LOGIC ENGINE v1.2.4 (AUTO-OPTIMIZATION)</title>
+<title>GROW-WIN · AGRI-LOGIC ENGINE v1.0 · CORRECTED</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
-body { background: #0a0c10; color: #e6edf3; font-family: 'Inter', sans-serif; font-size: 13px; }
-.card { background: #161b22; border: 1px solid #30363d; border-radius: 1.5rem; transition: 0.3s; }
-.card:hover { border-color: #2ea44f; }
-.input-field { background: #0d1117; border: 1px solid #3b434b; color: #2ea44f; padding: 0.5rem; border-radius: 0.75rem; width: 100%; font-weight: bold; outline: none; }
-.btn { background: #2ea44f; color: black; font-weight: 800; padding: 0.75rem; border-radius: 1rem; cursor: pointer; text-transform: uppercase; width: 100%; margin-top: 10px; border: none; }
-.btn:hover { background: #3fb950; box-shadow: 0 0 15px #2ea44f; transform: translateY(-1px); }
-.section-title { color: #2ea44f; font-weight: 900; text-transform: uppercase; font-size: 0.85rem; margin-bottom: 1rem; border-left: 3px solid #2ea44f; padding-left: 8px; }
-.label-text { font-size: 10px; font-weight: 700; color: #8b949e; text-transform: uppercase; margin-bottom: 4px; display: block; }
-.brain-box { border: 1px solid #2ea44f44; background: #0d1117; border-radius: 1rem; padding: 12px; min-height: 160px; }
-.designer-box { border: 1px solid #3a3f4b; background: #0d1117; border-radius: 1rem; padding: 12px; margin-top: 15px; }
-.result-box { background: #161b22; border: 1px solid #30363d; border-radius: 1rem; padding: 15px; }
-.watermark { text-align: center; margin-top: 2rem; font-size: 10px; color: #30363d; letter-spacing: 2px; font-weight: bold; }
-.fg-tag { background: #161b22; border: 1px solid #30363d; color: #8b949e; padding: 4px 10px; border-radius: 6px; font-size: 10px; cursor: pointer; transition: 0.2s; font-weight: 600; }
-.fg-tag:hover { border-color: #2ea44f; color: #2ea44f; background: #0d1117; }
-.fg-tag.active { border-color: #2ea44f; color: #2ea44f; background: #0d1117cc; }
-.fg-tag.risk { border-color: #f8514955; color: #f85149; }
-.fg-tag.risk:hover { border-color: #f85149; }
-.fg-tag.fert-logic { display: none; border-color: #f2cc6055; color: #f2cc60; }
-.fg-tag.fert-logic:hover { border-color: #f2cc60; }
-.suggestion-btn { font-size: 9px; background: #238636; color: white; padding: 2px 8px; border-radius: 4px; margin-left: 6px; cursor: pointer; border: none; font-weight: 800; text-transform: uppercase; display: inline-block; vertical-align: middle; }
-.suggestion-btn:hover { background: #2ea44f; box-shadow: 0 0 8px #2ea44f; }
-.moa-badge { display: inline-block; background: #1f2d1f; border: 1px solid #2ea44f55; color: #2ea44f; padding: 2px 8px; border-radius: 4px; font-size: 9px; font-weight: 700; letter-spacing: 1px; margin-top: 4px; }
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+    body { background: #0a0c10; color: #e6edf3; font-family: 'Inter', sans-serif; font-size: 13px; margin: 0; padding: 24px; }
+    .card { background: #161b22; border: 1px solid #30363d; border-radius: 1.5rem; transition: 0.3s; height: 100%; display: flex; flex-direction: column; }
+    .card:hover { border-color: #2ea44f; }
+    .input-field { background: #0d1117; border: 1px solid #3b434b; color: #2ea44f; padding: 0.5rem; border-radius: 0.75rem; width: 100%; font-weight: bold; outline: none; transition: 0.2s; }
+    .input-field:focus { border-color: #2ea44f; }
+    .btn { background: #2ea44f; color: black; font-weight: 800; padding: 0.75rem; border-radius: 1rem; cursor: pointer; text-transform: uppercase; width: 100%; margin-top: 10px; border: none; }
+    .btn:hover { background: #3fb950; box-shadow: 0 0 15px #2ea44f; transform: translateY(-1px); }
+    .section-title { color: #2ea44f; font-weight: 900; text-transform: uppercase; font-size: 0.85rem; margin-bottom: 1rem; border-left: 3px solid #2ea44f; padding-left: 8px; }
+    .label-text { font-size: 10px; font-weight: 700; color: #8b949e; text-transform: uppercase; margin-bottom: 4px; display: block; }
+    .brain-box { border: 1px solid #2ea44f44; background: #0d1117; border-radius: 1rem; padding: 12px; min-height: 140px; overflow-y: auto; }
+    .history-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+    .history-table th { color: #8b949e; text-align: left; padding: 8px; border-bottom: 1px solid #30363d; text-transform: uppercase; font-size: 9px; }
+    .history-table td { padding: 8px; border-bottom: 1px solid #21262d; font-family: monospace; }
+    .watermark { text-align: center; margin-top: 2rem; font-size: 10px; color: #30363d; letter-spacing: 2px; font-weight: bold; }
+    .group-pill { padding: 4px 8px; border: 1px solid #30363d; border-radius: 6px; cursor: pointer; font-size: 9px; text-align: center; transition: 0.2s; background: #0d1117; color: #8b949e; }
+    .group-pill.active { background: #2ea44f; color: black; border-color: #2ea44f; font-weight: bold; }
+    .btn-csv { background: #30363d; color: #e6edf3; padding: 0.4rem 0.8rem; font-size: 10px; border-radius: 8px; cursor: pointer; border: 1px solid #3b434b; }
+    .btn-csv:hover { background: #484f58; border-color: #2ea44f; }
 </style>
 </head>
-<body class="p-6">
+<body>
 
-<div class="max-w-[1300px] mx-auto">
-  <div class="text-center mb-8">
-    <h1 class="text-4xl font-black tracking-tighter uppercase">GROW-WIN <span class="text-[#2ea44f]">Agri-Logic Engine</span></h1>
-    <p class="text-xs text-gray-500 mt-1 tracking-widest uppercase">Logic-Based Computing · v1.2.4 (Industrial Grade — Auto-Optimization)</p>
-  </div>
-
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-    <div class="card p-6 border-l-4 border-blue-500">
-      <h2 class="section-title">Industrial Master Input</h2>
-      <div class="space-y-4">
-        <div>
-          <label class="label-text">Target Track</label>
-          <select id="targetType" class="input-field" onchange="toggleFertGroups()">
-            <option value="" disabled selected>Select Target Track</option>
-            <option value="INSECTICIDE">INSECTICIDE</option>
-            <option value="FUNGICIDE">FUNGICIDE</option>
-            <option value="HERBICIDE">HERBICIDE</option>
-            <option value="NEMATICIDE">NEMATICIDE</option>
-            <option value="ACARICIDE">ACARICIDE</option>
-            <option value="PGR">GROWTH REGULATOR</option>
-            <option value="BACTERICIDE">BACTERICIDE</option>
-            <option value="FERTILIZER" style="color:#f2cc60;">FERTILIZER / NUTRIENT</option>
-          </select>
+<div class="max-w-[1400px] mx-auto">
+    <div class="flex justify-between items-start mb-8">
+        <div class="flex-1"></div>
+        <div class="text-center flex-1">
+            <h1 class="text-4xl font-black tracking-tighter uppercase">GROW-WIN <span class="text-[#2ea44f]">Agri-Logic Engine</span></h1>
+            <p class="text-xs text-gray-500 mt-1 tracking-widest uppercase">v3.4 · Track-Aware Bio-Sieve · CORRECTED LOGIC</p>
         </div>
-
-        <div class="grid grid-cols-2 gap-2">
-          <div><label class="label-text">MW (Da)</label><input id="mw" type="number" class="input-field" placeholder="0"></div>
-          <div><label class="label-text">LogP</label><input id="logP" type="number" step="0.1" class="input-field" placeholder="0.0"></div>
-        </div>
-        <div class="grid grid-cols-2 gap-2">
-          <div><label class="label-text">TPSA (Å²)</label><input id="tpsa" type="number" class="input-field" placeholder="0"></div>
-          <div><label class="label-text">Rotatable Bonds</label><input id="rb" type="number" class="input-field" placeholder="0"></div>
-        </div>
-
-        <div>
-          <label class="label-text">Functional Groups (<span id="logic-count">33</span> Groups · <span style="color:#f85149">red=risk</span>)</label>
-          <input id="fg" type="text" class="input-field mb-2" placeholder="Click groups below...">
-          <div class="flex flex-wrap gap-1.5" id="tag-cloud">
-            <span class="fg-tag" onclick="addTag('aldehyde')">Aldehyde</span>
-            <span class="fg-tag" onclick="addTag('alkene')">Alkene</span>
-            <span class="fg-tag" onclick="addTag('amide')">Amide</span>
-            <span class="fg-tag" onclick="addTag('amine')">Amine</span>
-            <span class="fg-tag" onclick="addTag('ammonium')">Ammonium</span>
-            <span class="fg-tag" onclick="addTag('aromatic')">Aromatic</span>
-            <span class="fg-tag risk" onclick="addTag('carbamate')">Carbamate</span>
-            <span class="fg-tag" onclick="addTag('carboxyl')">Carboxyl</span>
-            <span class="fg-tag" onclick="addTag('chelating group')">Chelating Group</span>
-            <span class="fg-tag" onclick="addTag('citrate')">Citrate</span>
-            <span class="fg-tag risk" onclick="addTag('epoxide')">Epoxide</span>
-            <span class="fg-tag" onclick="addTag('ester')">Ester</span>
-            <span class="fg-tag" onclick="addTag('ether')">Ether</span>
-            <span class="fg-tag" onclick="addTag('fluorine')">Fluorine</span>
-            <span class="fg-tag" onclick="addTag('fulvic acid')">Fulvic Acid</span>
-            <span class="fg-tag" onclick="addTag('halogen')">Halogen</span>
-            <span class="fg-tag" onclick="addTag('heterocycle')">Heterocycle</span>
-            <span class="fg-tag" onclick="addTag('humic acid')">Humic Acid</span>
-            <span class="fg-tag" onclick="addTag('hydroxyl')">Hydroxyl</span>
-            <span class="fg-tag" onclick="addTag('ketone')">Ketone</span>
-            <span class="fg-tag" onclick="addTag('methylene')">Methylene</span>
-            <span class="fg-tag" onclick="addTag('nitrile')">Nitrile</span>
-            <span class="fg-tag risk" onclick="addTag('nitro')">Nitro</span>
-            <span class="fg-tag" onclick="addTag('phosphate')">Phosphate</span>
-            <span class="fg-tag" onclick="addTag('polymer chain')">Polymer Chain</span>
-            <span class="fg-tag" onclick="addTag('pyridine')">Pyridine</span>
-            <span class="fg-tag" onclick="addTag('silica')">Silica</span>
-            <span class="fg-tag" onclick="addTag('sulfate')">Sulfate</span>
-            <span class="fg-tag" onclick="addTag('sulfonamide')">Sulfonamide</span>
-            <span class="fg-tag" onclick="addTag('sulfur')">Sulfur</span>
-            <span class="fg-tag" onclick="addTag('triazine')">Triazine</span>
-            <span class="fg-tag" onclick="addTag('triazole')">Triazole</span>
-            <span class="fg-tag" onclick="addTag('urea')">Urea</span>
-            <span class="fg-tag fert-logic" onclick="addTag('nbpt')">NBPT (U-Inhibitor)</span>
-            <span class="fg-tag fert-logic" onclick="addTag('dmpp')">DMPP (N-Inhibitor)</span>
-            <span class="fg-tag fert-logic" onclick="addTag('edta')">EDTA Chelate</span>
-            <span class="fg-tag fert-logic" onclick="addTag('eddha')">EDDHA Chelate</span>
-            <span class="fg-tag fert-logic" onclick="addTag('amino acid complex')">Amino Complex</span>
-            <span class="fg-tag fert-logic" onclick="addTag('seaweed extract')">Seaweed Ext.</span>
-            <span class="fg-tag fert-logic" onclick="addTag('potassium oxide')">Potash (K2O)</span>
-            <span class="fg-tag fert-logic" onclick="addTag('magnesium')">Magnesium (Mg)</span>
-            <span class="fg-tag fert-logic" onclick="addTag('calcium')">Calcium (Ca)</span>
-            <span class="fg-tag fert-logic" onclick="addTag('boron')">Boron (B)</span>
-            <span class="fg-tag fert-logic" onclick="addTag('zinc')">Zinc (Zn)</span>
-            <span class="fg-tag fert-logic" onclick="addTag('iron')">Iron (Fe)</span>
-            <span class="fg-tag fert-logic" onclick="addTag('molybdenum')">Molybdenum (Mo)</span>
-            <span class="fg-tag fert-logic" onclick="addTag('manganese')">Manganese (Mn)</span>
-            <span class="fg-tag fert-logic" onclick="addTag('copper')">Copper (Cu)</span>
-          </div>
-        </div>
-
-        <hr class="border-gray-800">
-        <h2 class="section-title text-yellow-500">Field & Climate Pillars</h2>
-        <div class="grid grid-cols-2 gap-2">
-          <div><label class="label-text">VP (mPa)</label><input id="vaporPressure" type="number" step="0.000001" class="input-field" placeholder="0.001"></div>
-          <div><label class="label-text">UV-HL (Hr)</label><input id="uvHalfLife" type="number" class="input-field" placeholder="48"></div>
-        </div>
-        <div class="grid grid-cols-2 gap-2">
-          <div><label class="label-text">Solubility (mg/L)</label><input id="waterSolubility" type="number" class="input-field" placeholder="0"></div>
-          <div><label class="label-text">Rainfall (mm)</label><input id="rainfall" type="number" class="input-field" placeholder="0"></div>
-        </div>
-
-        <hr class="border-gray-800">
-        <h2 class="section-title text-blue-400">Agri Context</h2>
-        <div class="space-y-3">
-          <div class="grid grid-cols-2 gap-2">
-            <div>
-              <label class="label-text">Release Type</label>
-              <select id="releaseType" class="input-field">
-                <option value="fast">Fast</option>
-                <option value="controlled">Controlled</option>
-                <option value="encapsulated">Encapsulated</option>
-              </select>
+        <div class="flex-1 flex flex-col items-end">
+            <div class="w-48 p-3 bg-[#161b22] border border-[#30363d] rounded-xl">
+                <label class="label-text">Batch Upload (.csv)</label>
+                <input type="file" id="csvInput" accept=".csv" class="input-field mb-1" style="font-size:9px" onchange="runBatchScan()">
+                <div id="batchStatus" class="text-[9px] text-gray-500 font-bold uppercase">Ready...</div>
             </div>
-            <div>
-              <label class="label-text">Nutrient Type</label>
-              <select id="nutrientType" class="input-field">
-                <option value="N">N (Nitrogen)</option>
-                <option value="P">P (Phosphorus)</option>
-                <option value="K">K (Potassium)</option>
-                <option value="NPK">NPK (Mixed)</option>
-              </select>
-            </div>
-          </div>
-          <div class="grid grid-cols-2 gap-2">
-            <div><label class="label-text">Nutrient %</label><input id="nutrientPct" type="number" class="input-field" placeholder="0-100"></div>
-            <div><label class="label-text">Soil pH</label><input id="soilPH" type="number" step="0.1" class="input-field" placeholder="7.0"></div>
-          </div>
-          <div>
-            <label class="label-text">Soil Moisture</label>
-            <select id="moisture" class="input-field">
-              <option value="low">Low</option>
-              <option value="medium">Medium</option>
-              <option value="high">High</option>
-            </select>
-          </div>
         </div>
-        <button class="btn" onclick="runPredictiveEngine()">▶ RUN 100-Year Predictive Analysis</button>
-        <button class="btn" style="background:#21262d;color:#8b949e;margin-top:4px;" onclick="clearAll()">CLEAR ALL</button>
-      </div>
     </div>
 
-    <div class="card p-6 border-l-4 border-yellow-500 lg:col-span-2">
-      <div class="grid grid-cols-3 gap-3 mb-4" id="metricsRow" style="display:none!important;">
-        <div class="bg-[#0d1117] p-3 rounded-xl border border-[#30363d] text-center">
-          <div class="text-2xl font-black text-[#2ea44f]" id="m-score">0%</div>
-          <div class="label-text">Efficiency</div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="card p-6 border-l-4 border-blue-500">
+            <h2 class="section-title">Discovery Inputs</h2>
+            <div class="space-y-4">
+                <div>
+                    <label class="label-text">Application Track</label>
+                    <select id="targetType" class="input-field">
+                        <option value="INSECTICIDE">1. INSECTICIDE</option>
+                        <option value="FUNGICIDE">2. FUNGICIDE</option>
+                        <option value="HERBICIDE">3. HERBICIDE</option>
+                        <option value="NEMATICIDE">4. NEMATICIDE</option>
+                        <option value="ACARICIDE">5. ACARICIDE</option>
+                        <option value="PGR">6. PGR (GROWTH REGULATOR)</option>
+                        <option value="BACTERICIDE">7. BACTERICIDE</option>
+                        <option value="FERTILIZER">8. FERTILIZER</option>
+                    </select>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div><label class="label-text">LogP (Lipophilicity)</label><input id="logP" type="number" step="0.1" class="input-field" placeholder="0.0"></div>
+                    <div><label class="label-text">MW (Daltons)</label><input id="mw" type="number" class="input-field" placeholder="0"></div>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div><label class="label-text">Water Sol (mg/L)</label><input id="sol" type="number" class="input-field" placeholder="0"></div>
+                    <div><label class="label-text">TPSA (Å²)</label><input id="tpsa" type="number" class="input-field" placeholder="0"></div>
+                </div>
+                <div><label class="label-text">Soil Half-Life (DT50 Days)</label><input id="dt50" type="number" class="input-field" placeholder="0"></div>
+            </div>
         </div>
-        <div class="bg-[#0d1117] p-3 rounded-xl border border-[#30363d] text-center">
-          <div class="text-2xl font-black text-[#f85149]" id="m-waste">100%</div>
-          <div class="label-text">Waste</div>
-        </div>
-        <div class="bg-[#0d1117] p-3 rounded-xl border border-[#30363d] text-center">
-          <div class="text-2xl font-black text-[#f2cc60]" id="m-status">IDLE</div>
-          <div class="label-text">Verdict</div>
-        </div>
-      </div>
 
-      <div id="moaRow" style="display:none;margin-bottom:12px;">
-        <span class="label-text">Detected Class</span>
-        <div id="moaBadge" class="moa-badge">—</div>
-      </div>
-
-      <h2 class="section-title">Pattern Intelligence & Discovery</h2>
-      <div class="brain-box text-sm leading-relaxed mb-4" id="advisor-output">
-        <span style="color:#4a5568;">Engine Ready — Enter parameters...</span>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div class="result-box">
-          <span class="label-text">Logic Gates Status</span>
-          <div id="gate-status" class="space-y-1 mt-2 font-mono text-[10px]">
-            <div style="color:#4a5568;">Awaiting analysis...</div>
-          </div>
+        <div class="card p-6 border-l-4 border-purple-500">
+            <h2 class="section-title">Molecular Architecture</h2>
+            <label class="label-text mb-2">Select Functional Groups</label>
+            <div id="group-grid" class="grid grid-cols-3 gap-1 overflow-y-auto max-h-[300px] pr-2"></div>
         </div>
-        <div class="result-box flex flex-col items-center justify-center">
-          <span class="label-text">Success / Efficiency Prediction</span>
-          <div id="final-score" class="text-6xl font-black text-white mt-2">—</div>
-          <div id="status-label" class="mt-2 font-bold uppercase tracking-widest text-gray-500">IDLE</div>
-        </div>
-      </div>
 
-      <div class="designer-box">
-        <h2 class="section-title text-cyan-400">🧪 Extended Logic Insights</h2>
-        <div id="designer-output" class="text-[11px] text-gray-400 space-y-1 font-mono">
-          <span style="color:#4a5568;">Awaiting analysis...</span>
+        <div class="card p-6 border-l-4 border-green-500">
+            <h2 class="section-title">Engine Reasoning</h2>
+            <div class="brain-box text-[11px] leading-relaxed mb-4" id="brain-reasoning">
+                Awaiting compound parameters for logic sieve...
+            </div>
+            <button class="btn" onclick="runAgriEngine()">Analyze Formulation</button>
         </div>
-      </div>
     </div>
-  </div>
 
-  <div class="watermark">DESIGNED BY UDAYANA ANANTH KUMAR · GROW-WIN R&D · v1.2.4 INDUSTRIAL GRADE</div>
+    <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="card p-6 flex flex-col items-center justify-center text-center">
+            <span class="label-text mb-2">Discovery Success Score</span>
+            <div class="flex items-center gap-4">
+                <span id="globalScore" class="text-7xl font-black text-white">0.0</span>
+                <span id="globalRank" class="text-7xl font-black text-gray-800">-</span>
+            </div>
+            <div id="approvalStatus" class="mt-4 text-2xl font-black uppercase tracking-widest">Idle</div>
+            <div id="v3-timeline" class="mt-2 text-[10px] text-gray-500 font-mono"></div>
+        </div>
+        <div class="card p-6">
+            <span class="label-text mb-2">Environmental Sieve & Strategy</span>
+            <div class="grid grid-cols-2 gap-4 mb-4 font-bold text-[11px]">
+                <div class="flex justify-between border-b border-gray-800 pb-1"><span>GUS Index:</span><span id="pred-gus" class="text-blue-400">--</span></div>
+                <div class="flex justify-between border-b border-gray-800 pb-1"><span>BCF:</span><span id="pred-bcf" class="text-blue-400">--</span></div>
+                <div class="flex justify-between border-b border-gray-800 pb-1"><span>Permeability:</span><span id="pred-perm" class="text-green-500">--</span></div>
+                <div class="flex justify-between border-b border-gray-800 pb-1"><span>Persistence:</span><span id="pred-persist" class="text-green-500">--</span></div>
+            </div>
+            <div id="logic-log" class="space-y-1 font-mono text-[10px]"></div>
+        </div>
+    </div>
+
+    <div class="mt-8 card p-6">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="section-title text-blue-400 mb-0">R&D Comparison Bench</h2>
+            <button class="btn-csv" onclick="exportFullReport()">Export Report (.csv)</button>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="history-table">
+                <thead>
+                    <tr><th>Track</th><th>LogP</th><th>MW</th><th>Regulatory Risk</th><th>Score</th><th>Verdict</th></tr>
+                </thead>
+                <tbody id="history-body"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="watermark uppercase">Designed by Udayana Ananth Kumar · GROW-WIN Multi-Industrial Engine · v3.4 Corrected</div>
 </div>
 
 <script>
-const GROW_WIN_LOGIC = {
-  molecular: {
-    MW: { min: 50, max: 600 },
-    LogP: { min: -5, max: 6 },
-    TPSA: { max: 120 },
-    rotatableBonds: { max: 10 },
-    solubility: { min: 1, max: 600000 },
-    vaporPressure: { max: 0.01 },
-    UV_HL: { min: 12 }
-  },
-  functionalGroups: {
-    banned: ["carbamate","organophosphate","chlorinated hydrocarbon","nitro-aromatic"],
-    caution: ["halogen","aromatic heterocycle","urea","ammonium","polymer chain"],
-    allowed: ["amine","amide","ester","ether","phosphate","humic acid","chelates"]
-  }
+const AGRO_GROUPS = {
+  "ALCOHOL": { score: 5, risk: "LOW", logic: "Hydrophilic; reduces bioaccumulation." },
+  "ALDEHYDE": { score: -5, risk: "MEDIUM", logic: "Prone to environmental degradation." },
+  "AMIDE": { score: 6, risk: "LOW", logic: "Balanced persistence common in herbicides." },
+  "AMINE": { score: 7, risk: "LOW", logic: "Enhances biological target interaction." },
+  "AROMATIC_RING": { score: 4, risk: "MEDIUM", logic: "Improves membrane entry; check persistence." },
+  "CARBOXYLIC_ACID": { score: 6, risk: "LOW", logic: "Reduces environmental load." },
+  "CARBAMATE": { score: 3, risk: "MEDIUM", logic: "Effective insecticidal group; toxicity risk." },
+  "CYANO": { score: -4, risk: "HIGH", logic: "Increases toxicity and persistence." },
+  "ESTER": { score: 5, risk: "LOW", logic: "Improves uptake but hydrolyzes safely." },
+  "ETHER": { score: 2, risk: "LOW", logic: "Generally stable, low toxicity." },
+  "HALOGEN": { score: -8, risk: "HIGH", logic: "Strong link to DDT-like persistence." },
+  "HYDROXYL": { score: 5, risk: "LOW", logic: "Improves mobility; reduces accumulation." },
+  "IMIDE": { score: 3, risk: "LOW", logic: "Common core for modern fungicides." },
+  "ISOCYANATE": { score: -7, risk: "HIGH", logic: "Safety concern; highly reactive." },
+  "KETONE": { score: 2, risk: "LOW", logic: "Balanced functional group." },
+  "NITRILE": { score: -2, risk: "MEDIUM", logic: "Often increases soil half-life." },
+  "NITRO": { score: -6, risk: "HIGH", logic: "Health and environmental toxicity risk." },
+  "ORGANOPHOSPHATE": { score: -9, risk: "CRITICAL", logic: "Inhibits AChE; high regulatory risk." },
+  "PHENOL": { score: 1, risk: "MEDIUM", logic: "Effective but needs careful dosing." },
+  "PHOSPHATE": { score: 8, risk: "LOW", logic: "Essential for fertilizer delivery." },
+  "PYRETHROID_CORE": { score: 7, risk: "LOW", logic: "Modern safer insecticide class." },
+  "QUATERNARY_AMMONIUM": { score: 3, risk: "MEDIUM", logic: "Used as surfactant/disinfectant." },
+  "SULFIDE": { score: 1, risk: "MEDIUM", logic: "Transforms easily in soil." },
+  "SULFONYL": { score: 6, risk: "LOW", logic: "Common in low-dose herbicides." },
+  "SULFOXIDE": { score: 4, risk: "LOW", logic: "Improves environmental profile." },
+  "THIOESTER": { score: -3, risk: "MEDIUM", logic: "Less stable than O-esters." },
+  "TRIAZINE": { score: 6, risk: "MEDIUM", logic: "High activity; persistence concern." },
+  "UREA": { score: 9, risk: "LOW", logic: "Core fertilizer group for delivery." },
+  "URETHANE": { score: 3, risk: "LOW", logic: "Stable environmental behavior." },
+  "EPOXIDE": { score: -6, risk: "HIGH", logic: "Reactive and hazardous intermediate." }
 };
 
-const HISTORICAL_PATTERNS = {
-    "aldehyde": 55, "alkene": 80, "amide": 85, "amine": 90,
-    "ammonium": 75, "aromatic": 60, "carbamate": 5, "carboxyl": 88,
-    "chelating group": 92, "citrate": 90, "epoxide": 15, "ester": 95,
-    "ether": 90, "fluorine": 60, "fulvic acid": 95, "halogen": 40,
-    "heterocycle": 75, "humic acid": 98, "hydroxyl": 90, "ketone": 85,
-    "methylene": 90, "nitrile": 70, "nitro": 10, "phosphate": 95,
-    "polymer chain": 90, "pyridine": 75, "silica": 95, "sulfate": 90,
-    "sulfonamide": 80, "sulfur": 85, "triazine": 70, "triazole": 80,
-    "urea": 88
-};
+const groupGrid = document.getElementById('group-grid');
+Object.keys(AGRO_GROUPS).forEach(key => {
+    const div = document.createElement('div');
+    div.className = 'group-pill';
+    div.innerText = key.replace('_', ' ');
+    div.onclick = () => div.classList.toggle('active');
+    div.id = `group-${key}`;
+    groupGrid.appendChild(div);
+});
 
-const COMBO_PENALTIES = [
-    {groups:["urea","ammonium"], multiplier:0.85},
-    {groups:["halogen","aromatic"], multiplier:0.7},
-    {groups:["epoxide","nitro"], multiplier:0.5},
-    {groups:["phosphate","polymer chain"], multiplier:1.05},
-    {groups:["humic acid","fulvic acid"], multiplier:1.1}
-];
+let fullReportData = [];
 
-// ===========================
-// GROW-WIN ELITE ADVISORY LAYER (CORE CORRECTION)
-// ===========================
-function eliteAdvisor(fg, logP, sol, rain, release, efficiency) {
-    let advice = [];
-    let fixPlan = [];
-
-    if (efficiency < 40) {
-        advice.push("❌ Critical failure detected — molecule unstable in real-world conditions");
-    }
-    if (fg.includes("epoxide")) {
-        advice.push("⚠️ Epoxide group → high reactivity & environmental toxicity");
-        fixPlan.push("👉 REMOVE epoxide OR convert to ether/amide (stability ↑)");
-    }
-    if (fg.includes("halogen")) {
-        advice.push("⚠️ Halogen → persistence & bioaccumulation risk");
-        fixPlan.push("👉 REDUCE halogen OR replace with hydroxyl/amine");
-    }
-    if (fg.includes("nitro")) {
-        advice.push("⚠️ Nitro group → toxicity & regulatory rejection risk");
-        fixPlan.push("👉 REMOVE nitro → replace with amide/amine");
-    }
-    if (fg.includes("ammonium") && !fg.includes("nbpt")) {
-        advice.push("⚠️ Nitrogen volatility risk");
-        fixPlan.push("👉 ADD NBPT or DMPP (urease/nitrification inhibitor)");
-    }
-    if (fg.includes("phosphate") && !fg.includes("edta") && !fg.includes("eddha")) {
-        advice.push("⚠️ Phosphate fixation in soil");
-        fixPlan.push("👉 ADD EDTA / EDDHA / Citrate (unlock P availability)");
-    }
-    if (logP < 1) {
-        advice.push("⚠️ Too hydrophilic → poor membrane penetration");
-        fixPlan.push("👉 INCREASE LogP to 1.5–3 using mild hydrophobic groups (alkyl/ester)");
-    }
-    if (logP > 4) {
-        advice.push("⚠️ Too lipophilic → bioaccumulation risk");
-        fixPlan.push("👉 REDUCE LogP via hydroxyl/carboxyl addition");
-    }
-    if (sol > 500000 && rain > 50) {
-        advice.push("⚠️ High solubility + rainfall → severe leaching");
-        fixPlan.push("👉 ADD polymer coating / humic acid / encapsulation");
-    }
-    if (release === "fast") {
-        advice.push("⚠️ Fast release → nutrient loss before uptake");
-        fixPlan.push("👉 SWITCH to controlled or encapsulated release");
-    }
-    if (!fg.includes("humic acid")) fixPlan.push("⭐ ADD humic acid → improves soil retention + root uptake");
-    if (!fg.includes("fulvic acid")) fixPlan.push("⭐ ADD fulvic acid → improves nutrient transport");
-    if (!fg.includes("chelating group")) fixPlan.push("⭐ ADD chelating group → stabilizes micronutrients");
-    if (!fg.includes("amino acid complex")) fixPlan.push("⭐ ADD amino acid complex → boosts plant absorption efficiency");
-
-    let elitePath = [];
-    if (efficiency < 70) {
-        elitePath.push("🎯 To reach 80–95% (ELITE):");
-        elitePath.push("→ Remove toxic/reactive groups (epoxide, nitro)");
-        elitePath.push("→ Add stabilizers (EDTA, EDDHA, inhibitors)");
-        elitePath.push("→ Shift to controlled release");
-        elitePath.push("→ Balance LogP (1.5–3 range)");
-    }
-    return { advice, fixPlan, elitePath };
+function getPersistenceRating(dt50) {
+    if (dt50 > 90) return { level: "HIGH", color: "red", multiplier: 0.3 };
+    if (dt50 > 30) return { level: "MODERATE", color: "yellow", multiplier: 0.8 };
+    return { level: "LOW", color: "green", multiplier: 1.0 };
 }
 
-function applyOptimization(type) {
-    if(type === 'inhibitor') {
-        addTag('nbpt');
-        addTag('dmpp');
-    } else if (type === 'chelate') {
-        addTag('edta');
-        addTag('eddha');
-    } else if (type === 'release') {
-        document.getElementById('releaseType').value = 'controlled';
-    }
-    runPredictiveEngine();
+function getLeachingRisk(gus, track) {
+    if (gus > 4.0) return { risk: "⛔ HIGH LEACHING RISK (Groundwater Concern)", multiplier: 0.5 };
+    if (gus > 2.8) return { risk: "⚠️ MODERATE LEACHING (Secondary Concern)", multiplier: 0.85 };
+    return { risk: "CLEAR", multiplier: 1.0 };
 }
 
-function advisoryLogicCalculator(inputs) {
-    const { targetTrack, functionalGroups, releaseType, rainfall, soilPH, LogP, UV_HL } = inputs;
-    let multiplier = 1.0;
-    let suggestions = [];
-
-    if (targetTrack === "FERTILIZER" || targetTrack === "NUTRIENT") {
-        if (functionalGroups.includes("ammonium")) {
-            const hasInhibitor = functionalGroups.includes("nbpt") || functionalGroups.includes("dmpp");
-            if (!hasInhibitor) {
-                multiplier *= 0.75;
-                suggestions.push(`⚠️ Ammonium volatility detected. <button class="suggestion-btn" onclick="applyOptimization('inhibitor')">Apply Inhibitors</button>`);
-            } else {
-                multiplier *= 1.1;
-                suggestions.push("✅ N-inhibitors applied: Volatility risk neutralized.");
-            }
-        }
-        if (functionalGroups.includes("phosphate")) {
-            const hasChelate = functionalGroups.includes("edta") || functionalGroups.includes("eddha");
-            if (!hasChelate) {
-                multiplier *= 0.7;
-                suggestions.push(`⚠️ Phosphate fixation risk. <button class="suggestion-btn" onclick="applyOptimization('chelate')">Apply Chelates</button>`);
-            } else {
-                multiplier *= 1.15;
-                suggestions.push("✅ Phosphorus stabilized with high-grade chelating agents.");
-            }
-        }
-        if (releaseType === "fast" && rainfall > 50) {
-            multiplier *= 0.6;
-            suggestions.push(`⚠️ Fast release leaching risk. <button class="suggestion-btn" onclick="applyOptimization('release')">Switch to Controlled</button>`);
-        }
-        if (soilPH < 5 || soilPH > 8) {
-            multiplier *= 0.8;
-            suggestions.push("⚠️ Sub-optimal pH locks nutrients. Adjust formulation.");
-        }
-    } else {
-        if (functionalGroups.includes("nitro") || functionalGroups.includes("carbamate")) {
-            multiplier *= 0.5;
-            suggestions.push("❌ High toxicity/banned class detected.");
-        }
-        if (UV_HL < 12) {
-            multiplier *= 0.7;
-            suggestions.push(`⚠️ Low UV Half-life. <button class="suggestion-btn" onclick="applyOptimization('release')">Encapsulate</button>`);
-        }
-    }
-
-    if (suggestions.length === 0) suggestions.push("✅ No major chemical failures detected.");
-    return { multiplier, suggestions };
+function getPermeability(logP, tpsa) {
+    if (logP > 3.0) return "EXCELLENT";
+    if (logP < 1.0) return "POOR";
+    return "MODERATE";
 }
 
-function runPredictiveEngine(){
+function getBioaccumulationRisk(bcf) {
+    if (bcf > 1000) return { risk: "⚠️ EXTREME BIOACCUMULATION RISK", multiplier: 0.4 };
+    if (bcf > 100) return { risk: "⚠️ BIO-ACCUMULATION RISK", multiplier: 0.7 };
+    return { risk: null, multiplier: 1.0 };
+}
+
+function runAgriEngine() {
     const track = document.getElementById('targetType').value;
-    const mw = parseFloat(document.getElementById('mw').value) || 0;
     const logP = parseFloat(document.getElementById('logP').value) || 0;
+    const mw = parseFloat(document.getElementById('mw').value) || 0;
+    const sol = parseFloat(document.getElementById('sol').value) || 0;
+    const dt50 = parseFloat(document.getElementById('dt50').value) || 0;
     const tpsa = parseFloat(document.getElementById('tpsa').value) || 0;
-    const rb = parseFloat(document.getElementById('rb').value) || 0;
-    const fgRaw = document.getElementById('fg').value.toLowerCase();
-    const fg = fgRaw.split(',').map(s => s.trim()).filter(s => s!=="");
-    const sol = parseFloat(document.getElementById('waterSolubility').value) || 0;
-    const rain = parseFloat(document.getElementById('rainfall').value) || 0;
-    const release = document.getElementById('releaseType').value;
-    const soilPH = parseFloat(document.getElementById('soilPH').value) || 7.0;
-    const uvHL = parseFloat(document.getElementById('uvHalfLife').value) || 48;
 
-    if(!track){ alert("Select Target Track first"); return; }
+    if (mw === 0 || dt50 === 0) {
+        alert("Enter MW and DT50 values.");
+        return;
+    }
 
-    let baseEfficiency = 100;
-    fg.forEach(group=>{
-        const hist = HISTORICAL_PATTERNS[group];
-        if(hist) baseEfficiency *= (hist/100);
+    let baseScore = 60;
+    let multiplier = 1.0;
+    let logicAdvice = [];
+    let environmentalGates = [];
+    let hardReject = false;
+
+    // Functional Groups Analysis
+    let groupPoints = 0;
+    let activeKeys = [];
+    Object.keys(AGRO_GROUPS).forEach(key => {
+        const el = document.getElementById(`group-${key}`);
+        if (el.classList.contains('active')) {
+            activeKeys.push(key);
+            groupPoints += AGRO_GROUPS[key].score;
+            logicAdvice.push(`[${key}] ${AGRO_GROUPS[key].logic}`);
+        }
     });
-    COMBO_PENALTIES.forEach(combo=>{
-        if(combo.groups.every(g=>fg.includes(g))) baseEfficiency *= combo.multiplier;
-    });
 
-    const advisory = advisoryLogicCalculator({
-        targetTrack: track, functionalGroups: fg, releaseType: release, 
-        rainfall: rain, soilPH: soilPH, LogP: logP, UV_HL: uvHL
-    });
-    
-    let finalEfficiency = baseEfficiency * advisory.multiplier;
-    if(mw<GROW_WIN_LOGIC.molecular.MW.min || mw>GROW_WIN_LOGIC.molecular.MW.max) finalEfficiency *= 0.9;
-    if(fg.some(fgItem=>GROW_WIN_LOGIC.functionalGroups.banned.includes(fgItem))) finalEfficiency = 0;
+    let selectedRisks = activeKeys.map(k => AGRO_GROUPS[k].risk);
+    if (selectedRisks.includes("CRITICAL")) multiplier *= 0.2;
+    if (selectedRisks.filter(r => r === "HIGH").length >= 2) multiplier *= 0.5;
 
-    let verdict = "PASS";
-    if(finalEfficiency<=0) verdict="HARD FAIL";
-    else if(finalEfficiency<40) verdict="FAIL";
-    else if(finalEfficiency<70) verdict="CAUTION";
+    // GUS Index Calculation (corrected formula)
+    const gus = (Math.log10(dt50) * (4 - Math.log10(Math.max(sol, 0.1)))).toFixed(2);
+    const parsedGus = parseFloat(gus);
+    
+    // BCF Calculation (corrected)
+    const bcf = Math.pow(10, (0.85 * logP - 0.70)).toFixed(1);
+    const parsedBcf = parseFloat(bcf);
+    
+    document.getElementById('pred-gus').innerText = gus;
+    document.getElementById('pred-bcf').innerText = bcf;
 
-    document.getElementById('final-score').innerText = Math.round(finalEfficiency) + "%";
-    const label = document.getElementById('status-label');
-    label.innerText = verdict;
-    label.style.color = verdict==="HARD FAIL"?"#f85149":(verdict==="FAIL"?"#f2cc60":"#2ea44f");
-    document.getElementById('m-score').innerText = Math.round(finalEfficiency) + "%";
-    document.getElementById('m-waste').innerText = (100 - Math.round(finalEfficiency)) + "%";
-    document.getElementById('m-status').innerText = verdict;
-    document.getElementById('m-status').style.color = label.style.color;
-    
-    // BUILD ADVISORY OUTPUT
-    let outputHTML = advisory.suggestions.map(s => `• ${s}`).join("<br>");
-    
-    // CONNECT ELITE ADVISORY LAYER
-    const elite = eliteAdvisor(fg, logP, sol, rain, release, finalEfficiency);
-    let eliteHTML = `<div style="margin-top:15px; border-top:1px solid #30363d; padding-top:10px;">
-        <div style="color:#2ea44f;font-weight:900;letter-spacing:1px;margin-bottom:5px;">ELITE CORRECTION ADVISOR</div>`;
-    elite.advice.forEach(a => { eliteHTML += `<div style="color:#f2cc60;font-size:11px;">• ${a}</div>`; });
-    elite.fixPlan.forEach(f => { eliteHTML += `<div style="color:#2ea44f;font-weight:bold;">${f}</div>`; });
-    elite.elitePath.forEach(e => { eliteHTML += `<div style="color:#58a6ff;margin-top:5px;font-weight:800;">${e}</div>`; });
-    eliteHTML += `</div>`;
-    
-    document.getElementById("advisor-output").innerHTML = outputHTML + eliteHTML;
+    // Persistence Rating (CORRECTED - no more "STABLE FOR 50+ YEARS" error)
+    const persistRating = getPersistenceRating(dt50);
+    document.getElementById('pred-persist').innerText = persistRating.level;
+    if (persistRating.level === "HIGH") {
+        multiplier *= persistRating.multiplier;
+        environmentalGates.push("⛔ EXTREME PERSISTENCE (DT50 > 90 days)");
+        hardReject = true;
+        logicAdvice.push(`⚠️ PERSISTENCE ALERT: DT50 = ${dt50} days > 90 day threshold`);
+    } else if (persistRating.level === "MODERATE") {
+        multiplier *= persistRating.multiplier;
+        logicAdvice.push(`📊 MODERATE PERSISTENCE: DT50 = ${dt50} days (30-90 day range)`);
+    } else {
+        logicAdvice.push(`✅ LOW PERSISTENCE: DT50 = ${dt50} days (< 30 days)`);
+    }
 
-    document.getElementById('gate-status').innerHTML = `
-        <div class="text-gray-400">Chemical Interaction: x${advisory.multiplier.toFixed(2)}</div>
-        <div class="text-gray-400">Historical FG Pattern Applied</div>
+    // Leaching Risk (GUS-based)
+    const leachingRisk = getLeachingRisk(parsedGus, track);
+    if (leachingRisk.risk !== "CLEAR") {
+        multiplier *= leachingRisk.multiplier;
+        environmentalGates.push(leachingRisk.risk);
+    }
+
+    // Permeability (LogP-based - CORRECTED)
+    const permStatus = getPermeability(logP, tpsa);
+    document.getElementById('pred-perm').innerText = permStatus;
+    if (permStatus === "EXCELLENT" && logP > 4.5) {
+        logicAdvice.push(`⚠️ HIGH PERMEABILITY (LogP=${logP}) → potential bioaccumulation risk`);
+    }
+
+    // Bioaccumulation Risk (BCF-based)
+    const bioRisk = getBioaccumulationRisk(parsedBcf);
+    if (bioRisk.risk) {
+        multiplier *= bioRisk.multiplier;
+        environmentalGates.push(bioRisk.risk);
+        if (parsedBcf > 1000) hardReject = true;
+    }
+
+    // Track-specific adjustments
+    if (track === "FERTILIZER") {
+        if (sol > 10000) {
+            multiplier *= 0.5;
+            environmentalGates.push("⛔ NUTRIENT LOSS: Over-soluble → runoff risk");
+        }
+        if (sol >= 300 && sol <= 2000 && dt50 >= 20 && dt50 <= 60) {
+            baseScore += 15;
+            logicAdvice.push("✔ Optimal nutrient release profile (smart fertilizer zone)");
+        }
+    }
+
+    // LogP extremes
+    if (logP > 5.0) {
+        multiplier *= 0.6;
+        environmentalGates.push("⚠️ EXTREME LIPOPHILICITY (LogP > 5)");
+    }
+    if (logP < -1.0) {
+        multiplier *= 0.8;
+        environmentalGates.push("⚠️ EXTREME HYDROPHILICITY (LogP < -1)");
+    }
+
+    // DT50 > 100 hard reject
+    if (dt50 > 100) {
+        hardReject = true;
+        environmentalGates.push("⛔ EXTREME PERSISTENCE");
+    }
+
+    // Final Score Calculation
+    let finalScore = (baseScore + groupPoints) * multiplier;
+    if (hardReject) finalScore = Math.min(finalScore, 30);
+    finalScore = Math.max(0, Math.min(100, finalScore));
+
+    document.getElementById('globalScore').innerText = finalScore.toFixed(1);
+
+    // Success Rank and Status (CORRECTED thresholds)
+    let rank = "C", status = "REJECTED";
+    if (finalScore >= 70) { rank = "A"; status = "OPTIMIZE"; }
+    else if (finalScore >= 50) { rank = "B"; status = "LAB ONLY"; }
+    else { rank = "C"; status = "REJECTED"; }
+
+    document.getElementById('globalRank').innerText = rank;
+    document.getElementById('approvalStatus').innerText = status;
+    
+    // Regulatory timeline (CORRECTED - based on actual persistence)
+    let regulatoryOutlook = "";
+    if (dt50 > 90) regulatoryOutlook = "REGULATORY OUTLOOK: HIGH PERSISTENCE → BAN LIKELY < 10 YEARS";
+    else if (dt50 > 50) regulatoryOutlook = "REGULATORY OUTLOOK: MODERATE PERSISTENCE → REVIEW PENDING";
+    else if (logP > 4.5) regulatoryOutlook = "REGULATORY OUTLOOK: BIOACCUMULATION CONCERN";
+    else regulatoryOutlook = "REGULATORY OUTLOOK: FAVORABLE PROFILE";
+    
+    document.getElementById('v3-timeline').innerText = regulatoryOutlook;
+
+    // Environmental Gates Display
+    const envGatesHtml = environmentalGates.map(g => {
+        if (g.includes("⛔")) return `<div class='p-1 border-b border-gray-800 text-red-500 font-bold'>${g}</div>`;
+        if (g.includes("⚠️")) return `<div class='p-1 border-b border-gray-800 text-yellow-500'>${g}</div>`;
+        return `<div class='p-1 border-b border-gray-800 text-green-500'>${g}</div>`;
+    }).join('');
+    
+    document.getElementById('logic-log').innerHTML = envGatesHtml || "<div class='text-green-500'>✔ ENVIRONMENTAL GATES CLEAR</div>";
+    
+    // Engine Reasoning Display
+    const molecularArch = activeKeys.join(" | ") || "No functional groups selected";
+    const persistenceDesc = dt50 > 90 ? "HIGH PERSISTENCE" : (dt50 > 30 ? "MODERATE PERSISTENCE" : "LOW PERSISTENCE");
+    
+    document.getElementById('brain-reasoning').innerHTML = `
+        <div class='mb-2 text-blue-300 font-bold'>MOLECULAR ARCHITECTURE: ${molecularArch}</div>
+        <div class='mb-2'>PERSISTENCE: ${persistenceDesc} (DT50 = ${dt50} days)</div>
+        ${logicAdvice.map(a => `<div class='mb-1 text-gray-300'>${a}</div>`).join('')}
+        <hr class='my-2 border-gray-700'>
+        <div class='text-green-400'>ENVIRONMENTAL SUMMARY: ${environmentalGates.length === 0 ? "CLEAR PROFILE" : environmentalGates.join(" | ")}</div>
     `;
-    const designerOutput = document.getElementById('designer-output');
-    designerOutput.innerHTML = `<span style="color:#4a5568;">Full 100-year predictive efficiency: ${Math.round(finalEfficiency)}%<br>Verdict: ${verdict}<br>FGs: ${fg.join(", ")}</span>`;
-    document.getElementById('metricsRow').style.cssText = 'display:grid!important;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px;';
-    document.getElementById('moaRow').style.display = 'block';
-    document.getElementById('moaBadge').innerText = "Agro-Active Discovery";
+
+    // Store in report data
+    fullReportData.push({
+        Track: track,
+        LogP: logP,
+        MW: mw,
+        WaterSol: sol,
+        TPSA: tpsa,
+        DT50: dt50,
+        Molecular_Architecture: molecularArch,
+        Engine_Reasoning: `${persistenceDesc} | ${logicAdvice.join(" | ")}`,
+        Success_Score: finalScore.toFixed(1),
+        Success_Rank: rank,
+        Approval_Status: status,
+        GUS_Index: gus,
+        BCF: bcf,
+        Permeability: permStatus,
+        Persistence: persistRating.level,
+        Env_Gates: environmentalGates.join("|") || "CLEAR"
+    });
+
+    // Update history table
+    const row = `<tr><td>${track}</td><td>${logP}</td><td>${mw}</td><td>${environmentalGates.length > 0 ? environmentalGates[0] : "CLEAR"}</td><td>${finalScore.toFixed(1)}</td><td style='color: ${finalScore >= 70 ? "#2ea44f" : (finalScore >= 50 ? "#eab308" : "#f85149")}'>${rank}</td></tr>`;
+    document.getElementById('history-body').innerHTML = row + document.getElementById('history-body').innerHTML;
 }
 
-function toggleFertGroups() {
-  const track = document.getElementById('targetType').value;
-  const fertTags = document.querySelectorAll('.fert-logic');
-  if (track === "FERTILIZER") {
-    fertTags.forEach(tag => tag.style.display = 'inline-block');
-    document.getElementById('logic-count').innerText = "48";
-  } else {
-    fertTags.forEach(tag => tag.style.display = 'none');
-    document.getElementById('logic-count').innerText = "33";
-  }
+function exportFullReport() {
+    if(fullReportData.length === 0) {
+        alert("Analyze at least one compound first.");
+        return;
+    }
+    const headers = Object.keys(fullReportData[0]);
+    let csv = headers.join(",") + "\n";
+    fullReportData.forEach(row => {
+        csv += headers.map(h => `"${String(row[h]).replace(/"/g, '""')}"`).join(",") + "\n";
+    });
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `GROW-WIN_Agri_Full_Report_${new Date().getTime()}.csv`;
+    a.click();
 }
 
-function addTag(tag) {
-  const input = document.getElementById('fg');
-  let current = input.value.split(',').map(s => s.trim()).filter(s => s !== "");
-  if (!current.includes(tag)) { current.push(tag); } 
-  input.value = current.join(', ');
-  document.querySelectorAll('.fg-tag').forEach(btn => {
-    const btnTag = btn.getAttribute('onclick').match(/'([^']+)'/)?.[1];
-    if (btnTag === tag) btn.classList.add('active');
-  });
-}
-
-function clearAll() {
-  ['mw','logP','tpsa','rb','fg','vaporPressure','uvHalfLife','waterSolubility','rainfall','nutrientPct','soilPH'].forEach(id => {
-    const el = document.getElementById(id); if (el) el.value = '';
-  });
-  document.getElementById('targetType').selectedIndex = 0;
-  document.querySelectorAll('.fg-tag').forEach(b => b.classList.remove('active'));
-  document.getElementById('advisor-output').innerHTML = '<span style="color:#4a5568;">Engine Ready — Enter parameters...</span>';
-  document.getElementById('final-score').innerText = '—';
-  document.getElementById('status-label').innerText = 'IDLE';
-  document.getElementById('metricsRow').style.cssText = 'display:none!important;';
+function runBatchScan() {
+    const file = document.getElementById('csvInput').files[0];
+    if (!file) return;
+    document.getElementById('batchStatus').innerText = "Processing...";
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const rows = e.target.result.split("\n");
+        fullReportData = [];
+        document.getElementById('history-body').innerHTML = "";
+        
+        for (let i = 1; i < rows.length; i++) {
+            const cols = rows[i].split(",");
+            if (cols.length < 6) continue;
+            document.getElementById('targetType').value = cols[0].trim().toUpperCase();
+            document.getElementById('logP').value = cols[1];
+            document.getElementById('mw').value = cols[2];
+            document.getElementById('sol').value = cols[3];
+            document.getElementById('tpsa').value = cols[4] || 0;
+            document.getElementById('dt50').value = cols[5];
+            
+            // Clear functional groups selection
+            Object.keys(AGRO_GROUPS).forEach(key => {
+                const el = document.getElementById(`group-${key}`);
+                if (el) el.classList.remove('active');
+            });
+            
+            // Select functional groups if provided
+            if (cols[6]) {
+                const groups = cols[6].split("|");
+                groups.forEach(g => {
+                    const cleanG = g.trim().toUpperCase().replace(/ /g, '_');
+                    const el = document.getElementById(`group-${cleanG}`);
+                    if (el) el.classList.add('active');
+                });
+            }
+            
+            runAgriEngine();
+        }
+        document.getElementById('batchStatus').innerText = `Complete (${fullReportData.length} compounds)`;
+    };
+    reader.readAsText(file);
 }
 </script>
 </body>
