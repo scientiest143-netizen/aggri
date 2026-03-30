@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GROW-WIN · AGRI-LOGIC ENGINE v6.2 · PRODUCTION READY</title>
+<title>GROW-WIN · AGRI-LOGIC ENGINE v1.0</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
@@ -37,7 +37,7 @@
         <div class="flex-1"></div>
         <div class="text-center flex-1">
             <h1 class="text-4xl font-black tracking-tighter uppercase">GROW-WIN <span class="text-[#2ea44f]">Agri-Logic Engine</span></h1>
-            <p class="text-xs text-gray-500 mt-1 tracking-widest uppercase">v6.2 · Production Ready · 90%+ Real‑World Accuracy</p>
+            <p class="text-xs text-gray-500 mt-1 tracking-widest uppercase">v1.0</p>
         </div>
         <div class="flex-1 flex flex-col items-end">
             <div class="w-48 p-3 bg-[#161b22] border border-[#30363d] rounded-xl">
@@ -133,19 +133,14 @@
              ?>
         </div>
     </div>
-    <div class="watermark uppercase">Designed by Udayana Ananth Kumar · GROW-WIN v6.2 · Production Ready</div>
+    <div class="watermark uppercase">Designed by Udayana Ananth Kumar · GROW-WIN v6.3 · AI Optimizer</div>
 </div>
 
 <script>
 // ============================================================
-// GROW-WIN v6.2 PRODUCTION READY
-// Chemistry + Environment + Biology
-// 90%+ Real-World Accuracy
+// GROW-WIN v6.3 – AI Optimizer (Real‑World Suggestions)
 // ============================================================
 
-// ============================================================
-// FUNCTIONAL GROUP SCORES
-// ============================================================
 const AGRO_GROUPS = {
     "UREA": { score: 8, risk: "LOW", logic: "Core fertilizer — widely approved" },
     "PHOSPHATE": { score: 7, risk: "LOW", logic: "Essential nutrient — widely used" },
@@ -179,9 +174,6 @@ const AGRO_GROUPS = {
     "ORGANOPHOSPHATE": { score: -5, risk: "CRITICAL", logic: "AChE inhibitor — many banned/restricted" }
 };
 
-// ============================================================
-// TRACK SETTINGS
-// ============================================================
 const TRACK_SETTINGS = {
     "FERTILIZER": { baseScore: 75, logPOptimal: [0, 2], logPPenaltyFactor: 1.2, persistenceTolerance: 90 },
     "HERBICIDE": { baseScore: 70, logPOptimal: [1.5, 4.5], logPPenaltyFactor: 1.5, persistenceTolerance: 80 },
@@ -193,9 +185,6 @@ const TRACK_SETTINGS = {
     "PGR": { baseScore: 70, logPOptimal: [0.5, 3.5], logPPenaltyFactor: 1.5, persistenceTolerance: 70 }
 };
 
-// ============================================================
-// BIOLOGICAL LAYER
-// ============================================================
 function getAbsorptionScore(logP, tpsa, mw) {
     let score = 0;
     if (logP >= 1 && logP <= 3) score += 35;
@@ -231,9 +220,6 @@ function getBiologicalScore(logP, tpsa, mw, solubility, activeGroups) {
     return { bioScore, absorption, mobility, activity };
 }
 
-// ============================================================
-// SPECIAL DETECTIONS
-// ============================================================
 function isInorganicCompound(mw, tpsa, activeGroups, track) {
     if ((mw > 150 && mw < 250) && tpsa === 0 && track === "BACTERICIDE") return { isInorganic: true, boost: 45 };
     if (mw === 32 || (mw > 30 && mw < 35 && activeGroups.length === 0)) return { isInorganic: true, boost: 45 };
@@ -317,6 +303,79 @@ function getTrackPersistenceMultiplier(track, dt50) {
     if (dt50 <= tolerance * 1.8) return 0.95;
     if (dt50 <= tolerance * 2.5) return 0.9;
     return 0.85;
+}
+
+// ============================================================
+// AI OPTIMIZATION SUGGESTIONS – FOR ALL COMPOUNDS
+// ============================================================
+function generateOptimizationSuggestions(track, logP, mw, sol, tpsa, dt50, activeGroups, finalScore, rank, status, envGates) {
+    const suggestions = [];
+    const settings = TRACK_SETTINGS[track] || TRACK_SETTINGS["HERBICIDE"];
+    const [optMin, optMax] = settings.logPOptimal;
+    if (logP < optMin) {
+        suggestions.push(`📐 LogP ${logP} is below the optimal range (${optMin}-${optMax}) for ${track}. Increase lipophilicity by adding AROMATIC_RING or HALOGEN groups, or reduce polar groups.`);
+    } else if (logP > optMax) {
+        suggestions.push(`📐 LogP ${logP} exceeds optimal range (${optMin}-${optMax}) for ${track}. Reduce lipophilicity by adding polar groups (HYDROXYL, CARBOXYLIC_ACID, AMINE) or removing halogens.`);
+    }
+
+    if (dt50 > 90) {
+        suggestions.push(`⏱️ High persistence (DT50 = ${dt50} days). Reduce by removing HALOGEN, NITRO, or NITRILE groups. Introduce hydrolyzable ESTER or HYDROXYL groups.`);
+    } else if (dt50 > 60) {
+        suggestions.push(`⏱️ Moderate persistence (DT50 = ${dt50} days). Consider replacing persistent groups with more biodegradable alternatives.`);
+    }
+
+    const gus = parseFloat(document.getElementById('pred-gus').innerText);
+    if (gus > 4.5) {
+        suggestions.push(`💧 Extreme leaching risk (GUS = ${gus}). Increase soil binding by adding AROMATIC_RING or reducing water solubility (increase LogP).`);
+    } else if (gus > 3.5) {
+        suggestions.push(`💧 High leaching risk (GUS = ${gus}). Improve soil adsorption by introducing aromatic rings or reducing water solubility.`);
+    }
+
+    const bcf = parseFloat(document.getElementById('pred-bcf').innerText);
+    if (bcf > 1000) {
+        suggestions.push(`🐟 Very high bioaccumulation (BCF = ${bcf}). Reduce LogP (below 4) or add polar groups to lower fat solubility.`);
+    } else if (bcf > 500) {
+        suggestions.push(`🐟 High bioaccumulation (BCF = ${bcf}). Consider reducing LogP or introducing hydrolyzable groups.`);
+    }
+
+    if (activeGroups.includes("HALOGEN") && dt50 > 60) {
+        suggestions.push(`⚠️ HALOGEN group contributes to persistence. Replace with less persistent groups (e.g., AMIDE, ESTER) if possible.`);
+    }
+    if (activeGroups.includes("ORGANOPHOSPHATE") && dt50 > 30) {
+        suggestions.push(`⚠️ ORGANOPHOSPHATE is heavily restricted. Consider replacing with PYRETHROID_CORE or CARBAMATE (if persistence low).`);
+    }
+    if (activeGroups.includes("CARBAMATE") && dt50 > 40) {
+        suggestions.push(`⚠️ Persistent CARBAMATE may face regulatory action. Reduce persistence by shortening side chains or introducing hydrolyzable groups.`);
+    }
+    if (activeGroups.includes("TRIAZINE") && dt50 > 60) {
+        suggestions.push(`⚠️ TRIAZINE herbicides are restricted in EU due to groundwater contamination. Consider alternative herbicidal cores (e.g., SULFONYLUREA).`);
+    }
+    if (activeGroups.includes("AROMATIC_RING") && logP > 4.5 && dt50 > 60) {
+        suggestions.push(`⚠️ Combination of AROMATIC_RING + high LogP + persistence resembles banned POPs. Reduce halogenation or increase polarity.`);
+    }
+
+    if (sol < 10) {
+        suggestions.push(`💧 Very low water solubility (${sol} mg/L). Add polar groups (HYDROXYL, CARBOXYLIC_ACID) to improve solubility and reduce leaching.`);
+    } else if (sol > 10000 && track !== "FERTILIZER") {
+        suggestions.push(`💧 Very high water solubility (${sol} mg/L). Increase LogP slightly to reduce leaching risk while maintaining bioavailability.`);
+    }
+
+    if (mw > 600) {
+        suggestions.push(`⚖️ High molecular weight (${mw} Da) may hinder plant uptake. Reduce size or consider pro-drug strategies.`);
+    }
+
+    if (track === "INSECTICIDE" && logP > 5.5) {
+        suggestions.push(`🪲 Insecticide LogP >5.5 may cause excessive bioaccumulation. Aim for LogP 3-5 for optimal cuticle penetration with lower environmental risk.`);
+    }
+    if (track === "HERBICIDE" && logP < 1) {
+        suggestions.push(`🌿 Herbicide LogP <1 may limit foliar uptake. Increase lipophilicity slightly (LogP 2-4) for better penetration.`);
+    }
+    if (track === "FUNGICIDE" && logP < 1.5) {
+        suggestions.push(`🍄 Fungicide LogP <1.5 may reduce penetration into fungal membranes. Aim for LogP 2-4.`);
+    }
+
+    const unique = [...new Map(suggestions.map(s => [s.split(':')[0], s])).values()];
+    return unique.slice(0, 5);
 }
 
 let fullReportData = [];
@@ -416,13 +475,15 @@ function runAgriEngine() {
     
     document.getElementById('logic-log').innerHTML = envGates.map(g => `<div class='p-1 border-b border-gray-800 ${g.includes("⛔") ? "text-red-500" : "text-yellow-500"}'>${g}</div>`).join('') || "<div class='text-green-500'>✔ ENVIRONMENTAL GATES CLEAR</div>";
     
+    const suggestions = generateOptimizationSuggestions(track, logP, mw, sol, tpsa, dt50, activeGroups, finalScore, rank, status, envGates);
+    
     let reasoning = [];
-    reasoning.push(`📊 Track: ${track} — Chemical Score: ${chemicalScore.toFixed(1)}`);
-    reasoning.push(`🧪 Functional groups: ${activeGroups.join(" | ") || "None"} (Group score: ${groupScore})`);
-    reasoning.push(`🧬 Bio Layer → Absorption: ${bio.absorption.toFixed(0)} | Mobility: ${bio.mobility.toFixed(0)} | Activity: ${bio.activity.toFixed(0)} (BioScore: ${bio.bioScore.toFixed(1)})`);
-    reasoning.push(`🎯 Weighted Final Score: (75% Chemical + 25% Biological) = ${finalScore.toFixed(1)}`);
-    reasoning.push(`📈 Prediction Confidence: ${confidence}`);
-    reasoning.push(`🏆 Final: ${rank} (${status})`);
+    if (suggestions.length > 0) {
+        reasoning.push(`💡 OPTIMIZATION SUGGESTIONS:`);
+        suggestions.forEach(s => reasoning.push(`   🔧 ${s}`));
+    } else {
+        reasoning.push(`✅ No specific optimization needed — compound already shows excellent properties.`);
+    }
     
     document.getElementById('brain-reasoning').innerHTML = reasoning.map(r => `<div class='mb-1 text-gray-300'>${r}</div>`).join('');
     
@@ -441,10 +502,21 @@ function runAgriEngine() {
         Success_Rank: rank, Approval_Status: status,
         Confidence: confidence,
         GUS_Index: gus, BCF: bcf, Permeability: getPermeability(logP, tpsa),
-        Persistence: persist.level, Env_Gates: envGates.join(" | ") || "CLEAR"
+        Persistence: persist.level, Env_Gates: envGates.join(" | ") || "CLEAR",
+        Suggestions: suggestions.join(" | ")
     });
     
-    const row = `|<td class="text-gray-400">${compoundNumber}</td><td>${track}</td><td>${logP}</td><td>${mw}</td><td>${finalScore.toFixed(1)}</td><td>${bio.bioScore.toFixed(1)}</td><td class="${confidenceColor}">${confidence}</td><td style='color:${color}'>${rank}</td>|`;
+    // Fix: properly build HTML table row
+    const row = `<tr>
+        <td class="text-gray-400">${compoundNumber}</td>
+        <td>${track}</td>
+        <td>${logP}</td>
+        <td>${mw}</td>
+        <td>${finalScore.toFixed(1)}</td>
+        <td>${bio.bioScore.toFixed(1)}</td>
+        <td class="${confidenceColor}">${confidence}</td>
+        <td style="color:${color}">${rank}</td>
+    </tr>`;
     document.getElementById('history-body').innerHTML = row + document.getElementById('history-body').innerHTML;
 }
 
