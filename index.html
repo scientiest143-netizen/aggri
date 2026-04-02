@@ -37,7 +37,7 @@
         <div class="flex-1"></div>
         <div class="text-center flex-1">
             <h1 class="text-4xl font-black tracking-tighter uppercase">GROW-WIN <span class="text-[#2ea44f]">Agri-Logic Engine</span></h1>
-            <p class="text-xs text-gray-500 mt-1 tracking-widest uppercase">v1.0</p>
+            <p class="text-xs text-gray-500 mt-1 tracking-widest uppercase">v1.0 · Regulatory Overlay Added</p>
         </div>
         <div class="flex-1 flex flex-col items-end">
             <div class="w-48 p-3 bg-[#161b22] border border-[#30363d] rounded-xl">
@@ -127,13 +127,13 @@
         <div class="overflow-x-auto">
             <table class="history-table">
                 <thead>
-                    <tr><th>#</th><th>Track</th><th>LogP</th><th>MW</th><th>Score</th><th>BioScore</th><th>Confidence</th><th>Verdict</th> </>
+                    <tr><th>#</th><th>Track</th><th>LogP</th><th>MW</th><th>Score</th><th>BioScore</th><th>Confidence</th><th>Verdict</th></tr>
                 </thead>
                 <tbody id="history-body"></tbody>
-             ?>
+            </table>
         </div>
     </div>
-    <div class="watermark uppercase">Designed by Udayana Ananth Kumar · GROW-WIN v6.3 · AI Optimizer</div>
+    <div class="watermark uppercase">Designed by Udayana Ananth Kumar · GROW-WIN v6.3 · AI Optimizer + Regulatory Overlay</div>
 </div>
 
 <script>
@@ -378,6 +378,39 @@ function generateOptimizationSuggestions(track, logP, mw, sol, tpsa, dt50, activ
     return unique.slice(0, 5);
 }
 
+// ============================================================
+// REGULATORY BAN POST-PROCESSING RULES (added without touching scoring)
+// ============================================================
+function applyRegulatoryOverride(activeGroups, logP, dt50, originalRank, originalStatus, finalScore, bioScore) {
+    // Rules: only override if original is not already D? We apply regardless but keep score.
+    let overrideReason = null;
+    if (activeGroups.includes("ORGANOPHOSPHATE")) {
+        overrideReason = "ORGANOPHOSPHATE – Banned/restricted globally (neurotoxicity)";
+    } else if (activeGroups.includes("CARBAMATE") && dt50 > 30) {
+        overrideReason = `Persistent CARBAMATE (DT50 = ${dt50} days) – Banned/restricted in many regions`;
+    } else if (logP > 5.5 && dt50 > 1000) {
+        overrideReason = "DDT-like persistent organochlorine – BANNED globally";
+    } else if (dt50 > 365) {
+        overrideReason = `Extreme persistence (DT50 = ${dt50} days) – Banned in EU/US`;
+    } else if (logP > 6) {
+        overrideReason = `LogP ${logP} > 6 – Extreme bioaccumulation risk`;
+    }
+    
+    if (overrideReason) {
+        // Override verdict to D, status to REJECTED, but keep score and BioScore unchanged
+        return { 
+            override: true, 
+            rank: "D", 
+            status: `REJECTED (${overrideReason})`, 
+            reason: overrideReason,
+            color: "#f85149",
+            confidence: "LOW ❌",
+            confidenceColor: "confidence-low"
+        };
+    }
+    return { override: false };
+}
+
 let fullReportData = [];
 
 function runAgriEngine() {
@@ -450,12 +483,30 @@ function runAgriEngine() {
     else if (finalScore >= 40) { rank = "C"; status = "BORDERLINE (High risk)"; color = "#f85149"; }
     else { rank = "D"; status = "REJECTED (Historically banned patterns detected)"; color = "#f85149"; }
     
+    // ========== APPLY REGULATORY OVERRIDE (post-processing) ==========
+    const override = applyRegulatoryOverride(activeGroups, logP, dt50, rank, status, finalScore, bio.bioScore);
+    let finalRank = rank;
+    let finalStatus = status;
+    let finalColor = color;
+    let finalConfidence = confidence;
+    let finalConfidenceColor = confidenceColor;
+    let overrideMessage = "";
+    if (override.override) {
+        finalRank = override.rank;
+        finalStatus = override.status;
+        finalColor = override.color;
+        finalConfidence = override.confidence;
+        finalConfidenceColor = override.confidenceColor;
+        overrideMessage = ` ⛔ ${override.reason}`;
+    }
+    
+    // Update UI with potentially overridden values
     document.getElementById('globalScore').innerText = finalScore.toFixed(1);
-    document.getElementById('globalRank').innerText = rank;
-    document.getElementById('globalRank').style.color = color;
-    document.getElementById('approvalStatus').innerText = status;
-    document.getElementById('approvalStatus').style.color = color;
-    document.getElementById('confidenceTag').innerHTML = `<span class="${confidenceColor}">🎯 ${confidence}</span>`;
+    document.getElementById('globalRank').innerText = finalRank;
+    document.getElementById('globalRank').style.color = finalColor;
+    document.getElementById('approvalStatus').innerText = finalStatus;
+    document.getElementById('approvalStatus').style.color = finalColor;
+    document.getElementById('confidenceTag').innerHTML = `<span class="${finalConfidenceColor}">🎯 ${finalConfidence}</span>`;
     
     document.getElementById('pred-gus').innerText = gus;
     document.getElementById('pred-bcf').innerText = bcf;
@@ -475,7 +526,7 @@ function runAgriEngine() {
     
     document.getElementById('logic-log').innerHTML = envGates.map(g => `<div class='p-1 border-b border-gray-800 ${g.includes("⛔") ? "text-red-500" : "text-yellow-500"}'>${g}</div>`).join('') || "<div class='text-green-500'>✔ ENVIRONMENTAL GATES CLEAR</div>";
     
-    const suggestions = generateOptimizationSuggestions(track, logP, mw, sol, tpsa, dt50, activeGroups, finalScore, rank, status, envGates);
+    const suggestions = generateOptimizationSuggestions(track, logP, mw, sol, tpsa, dt50, activeGroups, finalScore, finalRank, finalStatus, envGates);
     
     let reasoning = [];
     if (suggestions.length > 0) {
@@ -484,12 +535,16 @@ function runAgriEngine() {
     } else {
         reasoning.push(`✅ No specific optimization needed — compound already shows excellent properties.`);
     }
+    if (override.override) {
+        reasoning.push(`   ⚠️ REGULATORY OVERRIDE: ${override.reason}`);
+    }
     
     document.getElementById('brain-reasoning').innerHTML = reasoning.map(r => `<div class='mb-1 text-gray-300'>${r}</div>`).join('');
     
     let timeline = historicalBan.banned ? "REGULATORY OUTLOOK: HISTORICAL BAN PATTERN" :
                     (finalScore >= 70 ? "REGULATORY OUTLOOK: FAVORABLE — Strong approval probability" :
                     (finalScore >= 55 ? "REGULATORY OUTLOOK: CAUTION — Requires additional data" : "REGULATORY OUTLOOK: HIGH RISK"));
+    if (override.override) timeline = "REGULATORY OUTLOOK: BANNED CLASS";
     document.getElementById('v3-timeline').innerText = timeline;
     
     const compoundNumber = fullReportData.length + 1;
@@ -499,11 +554,11 @@ function runAgriEngine() {
         Chemical_Score: chemicalScore.toFixed(1),
         BioScore: bio.bioScore.toFixed(1),
         Final_Score: finalScore.toFixed(1),
-        Success_Rank: rank, Approval_Status: status,
-        Confidence: confidence,
+        Success_Rank: finalRank, Approval_Status: finalStatus,
+        Confidence: finalConfidence,
         GUS_Index: gus, BCF: bcf, Permeability: getPermeability(logP, tpsa),
         Persistence: persist.level, Env_Gates: envGates.join(" | ") || "CLEAR",
-        Suggestions: suggestions.join(" | ")
+        Suggestions: suggestions.join(" | ") + overrideMessage
     });
     
     // Fix: properly build HTML table row
@@ -514,8 +569,8 @@ function runAgriEngine() {
         <td>${mw}</td>
         <td>${finalScore.toFixed(1)}</td>
         <td>${bio.bioScore.toFixed(1)}</td>
-        <td class="${confidenceColor}">${confidence}</td>
-        <td style="color:${color}">${rank}</td>
+        <td class="${finalConfidenceColor}">${finalConfidence}</td>
+        <td style="color:${finalColor}">${finalRank}</td>
     </tr>`;
     document.getElementById('history-body').innerHTML = row + document.getElementById('history-body').innerHTML;
 }
